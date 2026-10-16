@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.3",
     "framer-motion": "^14.2.0",
@@ -19,6 +21,7 @@
     "react": "19.3.0",
     "react-body-highlighter": "^2.0.5",
     "react-dom": "19.3.0",
+    "three": "^0.186.1",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
@@ -27,6 +30,7 @@
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.186.0",
     "@types/web-push": "^3.6.4",
     "eslint": "^9",
     "eslint-config-next": "16.4.1",
