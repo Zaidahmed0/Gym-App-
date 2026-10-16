@@ -151,18 +151,23 @@ export default function AdminPage() {
   const label = "block mb-2 mt-5 text-sm text-gray-400";
   const chip = (active: boolean) =>
     `px-4 py-2 rounded-full text-sm border ${active ? "bg-white text-black border-white" : "border-zinc-700 text-gray-300"}`;
+  const navBtn = "px-4 py-2 rounded-full border border-zinc-700 text-sm";
 
   return (
     <main className="min-h-screen bg-black text-white p-6 md:p-10">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start gap-3 flex-wrap">
           <div>
             <h1 className="text-5xl font-black leading-none">
               Theme <span className="text-lime-300">studio</span>
             </h1>
             <p className="mt-2 text-gray-400">{gyms.length} gyms on the platform</p>
           </div>
-          <button onClick={logout} className="px-4 py-2 rounded-full border border-zinc-700 text-sm">Logout</button>
+          <div className="flex gap-2 flex-wrap justify-end">
+            <button onClick={() => router.push("/admin/users")} className={navBtn}>Users</button>
+            <button onClick={() => router.push("/admin/exercises")} className={navBtn}>Exercise library</button>
+            <button onClick={logout} className={navBtn}>Logout</button>
+          </div>
         </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
@@ -173,7 +178,7 @@ export default function AdminPage() {
             <input value={name} onChange={(e) => setName(e.target.value)} required
               placeholder="Iron Tribe Fitness"
               className="w-full px-4 py-3 rounded-2xl bg-black border border-zinc-800 outline-none focus:border-lime-300" />
-            {name && !editingId && <p className="mt-2 text-sm text-gray-500">Link: yourapp.com/{makeSlug(name)}</p>}
+            {name && !editingId && <p className="mt-2 text-sm text-gray-500">Link: yourapp.com/g/{makeSlug(name)}</p>}
 
             <label className={label}>Tagline</label>
             <input value={tagline} onChange={(e) => setTagline(e.target.value)}
@@ -296,7 +301,7 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <p className="font-bold">{gym.name}</p>
-                  <p className="text-sm text-gray-500">/{gym.slug}</p>
+                  <p className="text-sm text-gray-500">/g/{gym.slug}</p>
                 </div>
               </div>
               <div className="flex gap-2">

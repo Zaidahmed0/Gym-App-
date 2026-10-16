@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, Mail, Lock } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
@@ -10,8 +10,12 @@ import Photo from "./home/Photo";
 
 export default function MemberLogin() {
   const { slug } = useParams<{ slug: string }>();
+  const search = useSearchParams();
   const router = useRouter();
   const supabase = createClient();
+
+  const nextParam = search.get("next");
+  const next = nextParam && nextParam.startsWith(`/g/${slug}`) ? nextParam : `/g/${slug}/home`;
 
   const [gym, setGym] = useState<Branding | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,7 +40,7 @@ export default function MemberLogin() {
       if (user) {
         const { data: p } = await supabase.from("profiles").select("role, gym_id").eq("id", user.id).single();
         if (p?.role === "member" && p.gym_id === g.id) {
-          router.replace(`/g/${slug}/home`);
+          router.replace(next);
           return;
         }
       }
@@ -63,7 +67,7 @@ export default function MemberLogin() {
       setBusy(false);
       return setMessage(`This account isn't a member of ${gym.name}.`);
     }
-    router.replace(`/g/${slug}/home`);
+    router.replace(next);
   }
 
   if (loading) return <main className="min-h-screen bg-black" />;
@@ -108,7 +112,9 @@ export default function MemberLogin() {
         <h1 className="text-5xl leading-none">
           Let&apos;s get<br /><span style={{ color: accent }}>moving</span>
         </h1>
-        <p className="mt-3 mb-7 text-sm text-gray-400">{gym.tagline || "Log in to see today's workout."}</p>
+        <p className="mt-3 mb-7 text-sm text-gray-400">
+          {next.includes("/checkin") ? "Log in to check in at the gym." : gym.tagline || "Log in to see today's workout."}
+        </p>
 
         <label className="flex items-center gap-3 px-4 mb-3" style={{ background: bg.card, borderRadius: radius }}>
           <Mail size={18} className="text-gray-500" />

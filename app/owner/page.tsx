@@ -351,6 +351,7 @@ export default function OwnerPage() {
             <button onClick={() => router.push("/owner/workouts")} className="px-4 py-2 rounded-full text-sm font-bold" style={accentStyle}>
               Workouts
             </button>
+            <button onClick={() => router.push("/owner/attendance")} className={smallBtn}>Attendance</button>
             <button onClick={() => router.push("/owner/notifications")} className={smallBtn}>Notifications</button>
             <button onClick={logout} className={smallBtn}>Logout</button>
           </div>
