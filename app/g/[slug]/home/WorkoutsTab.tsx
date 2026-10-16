@@ -93,7 +93,7 @@ export default function WorkoutsTab({ theme: t, items, library, todayStr, doneTo
             </button>
           </div>
 
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar" style={{ scrollbarWidth: "none" }}>
             {WEEK_ORDER.map((d) => {
               const count = items.filter((i) => i.day_of_week === d).length;
               return (
@@ -143,7 +143,7 @@ export default function WorkoutsTab({ theme: t, items, library, todayStr, doneTo
             <input placeholder={`Search ${library.length} exercises...`} value={q} onChange={(e) => setQ(e.target.value)}
               className="flex-1 py-3 outline-none bg-transparent" />
           </div>
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar" style={{ scrollbarWidth: "none" }}>
             {["All", ...CATEGORIES].map((c) => (
               <button key={c} onClick={() => setCat(c)} className="px-3.5 py-2 text-sm shrink-0 flex items-center gap-1.5" style={chip(cat === c)}>
                 <FitIcon category={c === "All" ? null : c} icon={c === "All" ? FIT.run : undefined} size={16} />
