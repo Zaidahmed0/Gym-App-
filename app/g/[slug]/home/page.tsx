@@ -91,8 +91,11 @@ export default function MemberHome() {
       const g = (b as Branding[] | null)?.[0];
       const { data: p } = await supabase.from("profiles").select("id, full_name, email, role, gym_id, is_active").eq("id", user.id).single();
 
-      if (!g || !p || p.role !== "member" || p.gym_id !== g.id) {
-        await supabase.auth.signOut();
+      if (!g || !p) {
+        setTimeout(() => window.location.reload(), 1500);
+        return;
+      }
+      if (p.role !== "member" || p.gym_id !== g.id) {
         return router.replace(`/g/${slug}`);
       }
       setGym(g);
