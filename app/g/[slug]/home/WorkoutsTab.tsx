@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Play, ChevronRight, Check } from "lucide-react";
+import { Search, Play, ChevronRight, Check, Sparkles } from "lucide-react";
 import Photo from "./Photo";
 import VideoBox from "./VideoBox";
 import FitIcon, { FIT } from "./FitIcon";
@@ -18,6 +18,10 @@ type Props = {
 };
 
 type Detail = ExerciseInfo & { meta?: string; key: string };
+
+function openSmartPlan() {
+  window.dispatchEvent(new Event("open-smart-plan"));
+}
 
 export default function WorkoutsTab({ theme: t, items, library, todayStr, doneToday, planTitle }: Props) {
   const [view, setView] = useState<"plan" | "library">("plan");
@@ -39,6 +43,7 @@ export default function WorkoutsTab({ theme: t, items, library, todayStr, doneTo
   const shownLib = library.filter(
     (x) => (cat === "All" || x.category === cat) && (!q || x.name.toLowerCase().includes(q.toLowerCase()))
   );
+  const isSmart = planTitle?.startsWith("Smart plan");
 
   function row(key: string, ex: ExerciseInfo, sub: string, onClick: () => void, done = false) {
     return (
@@ -80,8 +85,15 @@ export default function WorkoutsTab({ theme: t, items, library, todayStr, doneTo
 
       {view === "plan" && (
         <>
-          <p className="mt-5 text-xs text-gray-400">{planTitle || "No plan assigned yet"}</p>
-          <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
+          <div className="mt-5 flex items-center justify-between gap-3">
+            <p className="text-xs text-gray-400 truncate">{planTitle || "No plan yet"}</p>
+            <button onClick={openSmartPlan} className="text-xs px-3 py-1.5 flex items-center gap-1 shrink-0"
+              style={{ background: `${t.accent}22`, color: t.accent, borderRadius: t.pill }}>
+              <Sparkles size={12} /> {isSmart ? "Change smart plan" : "Get smart plan"}
+            </button>
+          </div>
+
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
             {WEEK_ORDER.map((d) => {
               const count = items.filter((i) => i.day_of_week === d).length;
               return (
@@ -95,9 +107,18 @@ export default function WorkoutsTab({ theme: t, items, library, todayStr, doneTo
 
           <div className="mt-4 grid gap-2">
             {dayItems.length === 0 && (
-              <div className="p-6 flex flex-col items-center gap-2 text-sm text-gray-400" style={card}>
+              <div className="p-6 flex flex-col items-center gap-2 text-sm text-gray-400 text-center" style={card}>
                 <FitIcon icon={FIT.rest} size={30} color={t.accent} />
-                Rest day
+                <p className="text-white text-base">Rest day</p>
+                <p className="text-xs">
+                  {items.length ? "Recover today. Your next session is marked with a dot above." : "You don't have a workout plan yet."}
+                </p>
+                {!items.length && (
+                  <button onClick={openSmartPlan} className="mt-2 px-5 py-2.5 text-sm flex items-center gap-1.5"
+                    style={{ background: t.accent, color: t.onAccent, borderRadius: t.pill }}>
+                    <Sparkles size={14} /> Build my smart plan
+                  </button>
+                )}
               </div>
             )}
             {dayItems.map((i) =>
@@ -105,8 +126,8 @@ export default function WorkoutsTab({ theme: t, items, library, todayStr, doneTo
                 ? row(
                     i.id,
                     i.exercises,
-                    `${i.sets} sets × ${i.reps} reps${i.rest_seconds ? ` · ${i.rest_seconds}s rest` : ""}`,
-                    () => setDetail({ ...i.exercises!, key: i.id, meta: `${i.sets} sets × ${i.reps} reps` }),
+                    `${i.sets} sets × ${i.reps}${/min/.test(i.reps || "") ? "" : " reps"}${i.rest_seconds ? ` · ${i.rest_seconds}s rest` : ""}`,
+                    () => setDetail({ ...i.exercises!, key: i.id, meta: `${i.sets} sets × ${i.reps}` }),
                     day === todayDow && doneToday.includes(i.exercise_id)
                   )
                 : null
@@ -119,10 +140,10 @@ export default function WorkoutsTab({ theme: t, items, library, todayStr, doneTo
         <>
           <div className="mt-5 flex items-center gap-2 px-4" style={{ background: t.card, borderRadius: t.pill }}>
             <Search size={18} className="text-gray-500" />
-            <input placeholder="Search exercises..." value={q} onChange={(e) => setQ(e.target.value)}
+            <input placeholder={`Search ${library.length} exercises...`} value={q} onChange={(e) => setQ(e.target.value)}
               className="flex-1 py-3 outline-none bg-transparent" />
           </div>
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
             {["All", ...CATEGORIES].map((c) => (
               <button key={c} onClick={() => setCat(c)} className="px-3.5 py-2 text-sm shrink-0 flex items-center gap-1.5" style={chip(cat === c)}>
                 <FitIcon category={c === "All" ? null : c} icon={c === "All" ? FIT.run : undefined} size={16} />

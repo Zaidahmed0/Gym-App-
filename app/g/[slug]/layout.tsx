@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import PwaSetup from "./PwaSetup";
 import CheckInFab from "./CheckInFab";
+import SmartPlanSetup from "./SmartPlanSetup";
 
 export default function GymLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,6 +9,7 @@ export default function GymLayout({ children }: { children: React.ReactNode }) {
       <PwaSetup />
       {children}
       <CheckInFab />
+      <SmartPlanSetup />
     </Suspense>
   );
 }
