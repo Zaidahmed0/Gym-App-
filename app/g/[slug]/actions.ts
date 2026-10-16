@@ -48,14 +48,36 @@ const SCHEDULES: Record<number, [number, string][]> = {
   6: [[1, "PUSH"], [2, "PULL"], [3, "LEGS"], [4, "UPPER_B"], [5, "LOWER_B"], [6, "FULL_C"]],
 };
 
-const CARDIO = ["Treadmill Run", "Cycling", "Jump Rope", "Rowing Machine", "Mountain Climbers", "Burpees"];
+const FOCUS_EXERCISES: Record<string, string[]> = {
+  chest: ["Dumbbell Flyes", "Cable Crossover", "Chest Dips"],
+  "front-deltoids": ["Arnold Press", "Front Raise"],
+  "back-deltoids": ["Rear Delt Fly", "Face Pulls"],
+  biceps: ["Hammer Curl", "Preacher Curl", "Concentration Curl"],
+  triceps: ["Skull Crushers", "Bench Dips", "Overhead Tricep Extension"],
+  forearm: ["Farmer's Walk", "Hammer Curl"],
+  abs: ["Hanging Leg Raise", "Crunches", "Mountain Climbers"],
+  obliques: ["Russian Twist", "Bicycle Crunch"],
+  trapezius: ["Dumbbell Shrugs", "Face Pulls"],
+  "upper-back": ["T-Bar Row", "One-Arm Dumbbell Row", "Pull Ups"],
+  "lower-back": ["Back Extension", "Romanian Deadlift"],
+  quadriceps: ["Leg Extension", "Goblet Squat", "Bulgarian Split Squat"],
+  hamstring: ["Leg Curl", "Romanian Deadlift"],
+  gluteal: ["Hip Thrust", "Sumo Squat", "Step Ups"],
+  calves: ["Calf Raises"],
+  adductor: ["Sumo Squat"],
+  abductors: ["Step Ups"],
+};
 
+const CARDIO = ["Treadmill Run", "Cycling", "Jump Rope", "Rowing Machine", "Mountain Climbers", "Burpees"];
 const GOAL_LABEL: Record<Goal, string> = { lose: "Fat loss", gain: "Muscle gain", maintain: "Stay fit" };
 
 export async function generateSmartPlan(input: {
   goal: Goal;
   level: Level;
   days: number;
+  focus?: string[];
+  gender?: string | null;
+  birthYear?: number | null;
   targetWeight?: number | null;
   heightCm?: number | null;
 }) {
@@ -94,6 +116,10 @@ export async function generateSmartPlan(input: {
     .single();
   if (planError || !plan) return { error: planError?.message || "Could not create plan" };
 
+  const age = input.birthYear ? new Date().getFullYear() - input.birthYear : null;
+  const older = age !== null && age >= 50;
+  const focus = (input.focus || []).filter((m) => FOCUS_EXERCISES[m]);
+
   const schedule = SCHEDULES[input.days] || SCHEDULES[3];
   const rows: {
     plan_id: string;
@@ -108,24 +134,44 @@ export async function generateSmartPlan(input: {
   schedule.forEach(([dow, key], dayIndex) => {
     let names = DAY_TEMPLATES[key];
     if (input.level === "beginner") names = names.slice(0, 5);
+    const usedToday = new Set<string>();
     let order = 0;
 
-    names.forEach((name, i) => {
+    const push = (name: string, compound: boolean) => {
       const id = byName.get(name.toLowerCase());
-      if (!id) return;
-      const compound = i < 2;
-      const sets =
-        input.level === "beginner" ? 3 : input.level === "advanced" ? (compound ? 5 : 4) : compound ? 4 : 3;
+      if (!id || usedToday.has(id)) return false;
+      let sets = input.level === "beginner" ? 3 : input.level === "advanced" ? (compound ? 5 : 4) : compound ? 4 : 3;
+      let rest = input.goal === "lose" ? 45 : input.goal === "gain" ? (compound ? 120 : 90) : 60;
+      if (older) {
+        sets = Math.min(sets, 3);
+        rest += 15;
+      }
       const reps =
-        input.goal === "lose" ? "12-15" : input.goal === "gain" ? (compound && input.level !== "beginner" ? "6-8" : "8-12") : "10-12";
-      const rest = input.goal === "lose" ? 45 : input.goal === "gain" ? (compound ? 120 : 90) : 60;
+        input.goal === "lose" ? "12-15" : input.goal === "gain" ? (compound && input.level !== "beginner" && !older ? "6-8" : "8-12") : "10-12";
       rows.push({ plan_id: plan.id, exercise_id: id, day_of_week: dow, sets, reps, rest_seconds: rest, sort_order: order++ });
-    });
+      usedToday.add(id);
+      return true;
+    };
+
+    names.forEach((name, i) => push(name, i < 2));
+
+    if (focus.length) {
+      let added = 0;
+      for (let k = 0; k < focus.length && added < 2; k++) {
+        const muscle = focus[(dayIndex + k) % focus.length];
+        for (const name of FOCUS_EXERCISES[muscle]) {
+          if (push(name, false)) {
+            added++;
+            break;
+          }
+        }
+      }
+    }
 
     const addCardio = input.goal === "lose" || (input.goal === "maintain" && dayIndex % 2 === 0);
     if (addCardio) {
       const cardioId = byName.get(CARDIO[dayIndex % CARDIO.length].toLowerCase());
-      if (cardioId) {
+      if (cardioId && !usedToday.has(cardioId)) {
         rows.push({
           plan_id: plan.id,
           exercise_id: cardioId,
@@ -151,6 +197,9 @@ export async function generateSmartPlan(input: {
     goal: input.goal,
     level: input.level,
     days_per_week: input.days,
+    focus_muscles: focus,
+    gender: input.gender ?? null,
+    birth_year: input.birthYear ?? null,
     target_weight: input.targetWeight ?? null,
     height_cm: input.heightCm ?? null,
     updated_at: new Date().toISOString(),
