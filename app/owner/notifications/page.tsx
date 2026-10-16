@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { textOn } from "@/utils/theme";
+import { pushAnnouncement, sendRemindersNow } from "./actions";
 
 type Gym = {
   id: string;
@@ -53,6 +54,7 @@ export default function OwnerNotifications() {
   const [audience, setAudience] = useState("all");
   const [pinned, setPinned] = useState(false);
   const [popup, setPopup] = useState(true);
+  const [sendPush, setSendPush] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [posting, setPosting] = useState(false);
   const [msg, setMsg] = useState("");
@@ -125,9 +127,19 @@ export default function OwnerNotifications() {
       pinned,
       popup,
     });
+    if (error) {
+      setPosting(false);
+      return setMsg("Error: " + error.message);
+    }
+
+    let pushText = "";
+    if (sendPush) {
+      const result = await pushAnnouncement(title, body || null, imageUrl, audience);
+      pushText = result.sent ? ` Sent to ${result.sent} phone${result.sent === 1 ? "" : "s"}.` : " No phones have notifications turned on yet.";
+    }
+
     setPosting(false);
-    if (error) return setMsg("Error: " + error.message);
-    setMsg("Posted! Members will see it when they open the app.");
+    setMsg("Posted!" + pushText);
     setTitle("");
     setBody("");
     setImageUrl(null);
@@ -159,10 +171,10 @@ export default function OwnerNotifications() {
   }
 
   async function sendNow() {
-    if (!gym) return;
     setSettingsMsg("Sending...");
-    const { data, error } = await supabase.rpc("send_expiry_reminders", { p_gym: gym.id });
-    setSettingsMsg(error ? "Error: " + error.message : `${data ?? 0} reminders sent`);
+    const result = await sendRemindersNow();
+    if (result.error) return setSettingsMsg("Error: " + result.error);
+    setSettingsMsg(`${result.created} reminders created, ${result.sent} sent to phones`);
   }
 
   if (checking) return <main className="min-h-screen bg-black text-gray-400 p-8">Loading...</main>;
@@ -237,6 +249,13 @@ export default function OwnerNotifications() {
             <div className="mt-5 grid gap-3">
               <div className="flex items-center justify-between gap-3">
                 <div>
+                  <p className="text-sm">Send to phones</p>
+                  <p className="text-xs text-gray-500">Push notification on lock screen, for members who turned it on</p>
+                </div>
+                {toggle(sendPush, () => setSendPush(!sendPush))}
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <div>
                   <p className="text-sm">Show as popup</p>
                   <p className="text-xs text-gray-500">Pops up once when members open the app</p>
                 </div>
@@ -264,7 +283,7 @@ export default function OwnerNotifications() {
               <div className="mt-4 flex items-start justify-between gap-3">
                 <div>
                   <p className="text-sm">Expiry reminders</p>
-                  <p className="text-xs text-gray-500">Sent every morning at 9 AM, 7, 3 and 1 day before a plan ends, on the last day, and the day after.</p>
+                  <p className="text-xs text-gray-500">Sent every morning, 7, 3 and 1 day before a plan ends, on the last day, and the day after. Goes to the app and the phone.</p>
                 </div>
                 {toggle(gym.auto_reminders, () => saveGym({ auto_reminders: !gym.auto_reminders }))}
               </div>
