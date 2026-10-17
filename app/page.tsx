@@ -10,6 +10,7 @@ import { Archivo_Black } from "next/font/google";
 import { Flame, Play, MapPin, Check, Plus, Minus, ArrowUpRight, Download } from "lucide-react";
 import SmoothScroll from "./v/SmoothScroll";
 import LeadForm from "./_landing/LeadForm";
+import { GetAppLink, FloatingGetApp } from "./_landing/GetApp";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
@@ -267,7 +268,7 @@ export default function Landing() {
           <div className="px-5 md:px-8 py-5 flex justify-between items-center">
             <span className={`${display.className} text-xl px-3 py-1 -rotate-2 text-black`} style={{ background: ACCENT }}>{BRAND}</span>
             <div className="flex items-center gap-3 text-sm">
-              <Link href="/download" className="hidden md:inline hover:text-[#D4F75C]">Get the app</Link>
+              <GetAppLink className="hover:text-[#D4F75C] font-bold">GET APP</GetAppLink>
               <Link href="/login" className="hidden md:inline hover:text-[#D4F75C]">Owner login</Link>
               <a href="#demo" className="px-4 py-2 bg-white text-black font-bold hover:bg-[#D4F75C] transition-colors">BOOK DEMO</a>
             </div>
@@ -390,24 +391,6 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="px-5 md:px-10 py-24 max-w-4xl">
-          <p className={`reveal ${display.className} text-5xl md:text-7xl`}>QUESTIONS<span style={{ color: ACCENT }}>?</span></p>
-          <div className="mt-10">
-            {FAQS.map((f, i) => (
-              <div key={f.q} className="border-t border-white/15">
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full py-6 flex justify-between items-center gap-4 text-left">
-                  <span className="text-lg md:text-xl font-bold">{f.q}</span>
-                  <span className="w-9 h-9 flex items-center justify-center shrink-0 text-black" style={{ background: ACCENT }}>
-                    {openFaq === i ? <Minus size={16} /> : <Plus size={16} />}
-                  </span>
-                </button>
-                {openFaq === i && <p className="pb-6 text-gray-400 max-w-2xl">{f.a}</p>}
-              </div>
-            ))}
-            <div className="border-t border-white/15" />
-          </div>
-        </section>
-
         <section id="demo" className="px-4 md:px-10 py-24">
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div>
@@ -417,26 +400,28 @@ export default function Landing() {
                 <a href={wa} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 bg-green-500 text-black font-bold">
                   WhatsApp us <ArrowUpRight size={16} />
                 </a>
-                <Link href="/download" className="inline-flex items-center gap-2 px-6 py-3.5 border-2 border-white font-bold hover:bg-white hover:text-black transition-colors">
+                <GetAppLink className="inline-flex items-center gap-2 px-6 py-3.5 border-2 border-white font-bold hover:bg-white hover:text-black transition-colors">
                   <Download size={16} /> Get the app
-                </Link>
+                </GetAppLink>
               </div>
             </div>
             <div className="reveal"><LeadForm accent={ACCENT} /></div>
           </div>
         </section>
 
-        <footer className="border-t-2 border-white">
+        <footer className="border-t-2 border-white pb-20 md:pb-0">
           <div className="px-5 md:px-10 py-10 flex flex-wrap justify-between gap-4 text-sm text-gray-400">
             <span className={`${display.className} text-white text-lg`}>{BRAND}</span>
             <div className="flex gap-6">
-              <Link href="/download" className="hover:text-white">Get the app</Link>
+              <GetAppLink className="hover:text-white">Get the app</GetAppLink>
               <Link href="/login" className="hover:text-white">Owner login</Link>
               <a href={wa} className="hover:text-white">Contact</a>
             </div>
           </div>
           <p className={`${display.className} text-center text-[22vw] leading-[0.8] pb-2 select-none`} style={{ color: ACCENT }}>{BRAND}</p>
         </footer>
+
+        <FloatingGetApp />
       </main>
     </SmoothScroll>
   );
