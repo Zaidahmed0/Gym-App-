@@ -229,21 +229,33 @@ export default function Landing() {
       if (floater && floaterImg) {
         const xTo = gsap.quickTo(floater, "x", { duration: 0.5, ease: "power3" });
         const yTo = gsap.quickTo(floater, "y", { duration: 0.5, ease: "power3" });
-        const onMove = (e: PointerEvent) => { xTo(e.clientX - 130); yTo(e.clientY - 170); };
+        let current: string | null = null;
+
+        const show = (src: string) => {
+          if (current !== src) floaterImg.src = src;
+          current = src;
+          gsap.to(floater, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out", overwrite: "auto" });
+        };
+        const hide = () => {
+          if (!current) return;
+          current = null;
+          gsap.to(floater, { opacity: 0, scale: 0.7, duration: 0.25, overwrite: "auto" });
+        };
+
+        const onMove = (e: PointerEvent) => {
+          xTo(e.clientX - 130);
+          yTo(e.clientY - 170);
+          const row = (e.target as Element | null)?.closest?.(".row") as HTMLElement | null;
+          if (row?.dataset.img) show(row.dataset.img);
+          else hide();
+        };
+        const onScroll = () => hide();
+
         window.addEventListener("pointermove", onMove);
-        cleanups.push(() => window.removeEventListener("pointermove", onMove));
-        gsap.utils.toArray<HTMLElement>(".row").forEach((row) => {
-          const enter = () => {
-            floaterImg.src = row.dataset.img || "";
-            gsap.to(floater, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" });
-          };
-          const leave = () => gsap.to(floater, { opacity: 0, scale: 0.7, duration: 0.3 });
-          row.addEventListener("pointerenter", enter);
-          row.addEventListener("pointerleave", leave);
-          cleanups.push(() => {
-            row.removeEventListener("pointerenter", enter);
-            row.removeEventListener("pointerleave", leave);
-          });
+        window.addEventListener("scroll", onScroll, { passive: true });
+        cleanups.push(() => {
+          window.removeEventListener("pointermove", onMove);
+          window.removeEventListener("scroll", onScroll);
         });
       }
 
@@ -388,6 +400,24 @@ export default function Landing() {
                 <a href="#demo" className={`mt-8 py-3.5 text-center font-bold ${p.hot ? "bg-black text-white" : "bg-white text-black"}`}>GET STARTED</a>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="px-5 md:px-10 py-24 max-w-4xl">
+          <p className={`reveal ${display.className} text-5xl md:text-7xl`}>QUESTIONS<span style={{ color: ACCENT }}>?</span></p>
+          <div className="mt-10">
+            {FAQS.map((f, i) => (
+              <div key={f.q} className="border-t border-white/15">
+                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full py-6 flex justify-between items-center gap-4 text-left">
+                  <span className="text-lg md:text-xl font-bold">{f.q}</span>
+                  <span className="w-9 h-9 flex items-center justify-center shrink-0 text-black" style={{ background: ACCENT }}>
+                    {openFaq === i ? <Minus size={16} /> : <Plus size={16} />}
+                  </span>
+                </button>
+                {openFaq === i && <p className="pb-6 text-gray-400 max-w-2xl">{f.a}</p>}
+              </div>
+            ))}
+            <div className="border-t border-white/15" />
           </div>
         </section>
 
