@@ -1,457 +1,443 @@
 "use client";
 
 import { useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
+import { useGSAP } from "@gsap/react";
 import { Archivo_Black } from "next/font/google";
-import { Icon } from "@iconify/react";
-import { ArrowRight, ArrowUpRight, Check, Plus, Minus, Menu, X, Flame, Play } from "lucide-react";
-import Photo from "./g/[slug]/home/Photo";
+import { Flame, Play, MapPin, Check, Plus, Minus, ArrowUpRight, Download } from "lucide-react";
+import SmoothScroll from "./v/SmoothScroll";
 import LeadForm from "./_landing/LeadForm";
 
+gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+
+const display = Archivo_Black({ weight: "400", subsets: ["latin"] });
 const BRAND = "GymPulse";
 const ACCENT = "#D4F75C";
 const WHATSAPP = "919999999999";
 const PRICES = { starter: "₹999", pro: "₹1,999" };
 
-const Dumbbell3D = dynamic(() => import("./_landing/Dumbbell3D"), { ssr: false, loading: () => <div className="w-full h-full" /> });
-const display = Archivo_Black({ weight: "400", subsets: ["latin"] });
+const px = (id: number, w = 900) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
+const TRAIL = [5327530, 11433060, 20873830, 4164759, 17210042, 13896072, 3837439, 9152548, 3763115, 4164755];
 
-const GRAIN =
-  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>\")";
-
-const FEATURES = [
-  { icon: "material-symbols:qr-code-scanner", title: "QR + geofence check-in", text: "Members scan at the door. Location check stops fake check-ins from home.", big: true },
-  { icon: "material-symbols:auto-awesome", title: "Smart workout plans", text: "Goal, level and muscle focus in, a full weekly routine out. Automatically." },
-  { icon: "material-symbols:notifications-active", title: "Push notifications", text: "Offers, timings and reminders straight to the lock screen." },
-  { icon: "material-symbols:palette", title: "Your brand, your app", text: "Your logo, colors and fonts. Members see your gym, not ours.", big: true },
-  { icon: "material-symbols:event-repeat", title: "Auto expiry reminders", text: "7, 3 and 1 day before a plan ends. Renewals without chasing." },
-  { icon: "material-symbols:play-circle", title: "Form videos", text: "One tap on any exercise and the how-to video plays." },
-  { icon: "material-symbols:monitoring", title: "Attendance insights", text: "See who's slipping away and nudge them on WhatsApp." },
-  { icon: "material-symbols:install-mobile", title: "No app store needed", text: "Share a link. Members install it in one tap." },
+const ROWS = [
+  { name: "Smart plans", text: "A weekly routine for every goal", img: 5327530 },
+  { name: "QR check-in", text: "Scan at the door, location verified", img: 9152548 },
+  { name: "Streaks", text: "A reason to come back tomorrow", img: 17210042 },
+  { name: "Your brand", text: "Your logo, your colors, their phone", img: 20873830 },
+  { name: "Insights", text: "Who's in, who's due, who's slipping", img: 4164759 },
 ];
 
-const REEL = [
-  { img: "/images/legs.jpg?v=reel1", label: "LEG DAY" },
-  { img: "/images/chest.jpg?v=reel2", label: "PUSH" },
-  { img: "/images/back.jpg?v=reel3", label: "PULL" },
-  { img: "/images/cardio.jpg?v=reel4", label: "CARDIO" },
-  { img: "/images/arms.jpg?v=reel5", label: "ARMS" },
-  { img: "/images/rest.jpg?v=reel6", label: "RECOVER" },
+const CARDS = [
+  { title: "SMART PLANS", text: "Goal, level and muscle focus in. A full weekly routine out. Every member, automatically.", bg: ACCENT, fg: "#000", img: 5327530 },
+  { title: "SCAN TO CHECK IN", text: "QR at the door plus a location check. No cheating from the couch.", bg: "#161616", fg: "#fff", img: 9152548 },
+  { title: "NO MORE CHASING", text: "Reminders go out before every plan ends. Dues tracked. Renewals on autopilot.", bg: "#ffffff", fg: "#000", img: 13896072 },
+  { title: "YOUR BRAND", text: "Your logo, colors and fonts. Members see your gym on their home screen.", bg: "#161616", fg: "#fff", img: 17210042 },
 ];
 
 const FAQS = [
-  { q: "Do my members need to download anything from the Play Store?", a: "No. You share a link, they open it and tap Install. It sits on their home screen with your gym's logo, just like an app." },
-  { q: "Can I use my own logo and colors?", a: "Yes. You pick your logo, accent color, background and font. Every member sees your branding." },
-  { q: "What if some members don't use smartphones?", a: "You can check them in manually from your dashboard. Their plan and expiry are still tracked." },
-  { q: "Is my members' data safe?", a: "Each gym's data is kept separate, and passwords are encrypted so nobody, not even us, can read them." },
-  { q: "How long does setup take?", a: "We create your gym and owner account for you. Most gyms add their first members the same day." },
+  { q: "Do members need the Play Store?", a: "No. Android members get a direct download link, iPhone members add it to their home screen in two taps." },
+  { q: "Can I use my own logo and colors?", a: "Yes. Logo, accent color, background and font. Every member sees your branding." },
+  { q: "What about members without smartphones?", a: "Check them in manually from your dashboard. Their plan, dues and expiry are still tracked." },
+  { q: "Is member data safe?", a: "Each gym's data is kept separate, and passwords are encrypted so nobody, not even us, can read them." },
 ];
 
-function MagneticButton({ children, href, primary }: { children: React.ReactNode; href: string; primary?: boolean }) {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const x = useSpring(0, { stiffness: 200, damping: 15 });
-  const y = useSpring(0, { stiffness: 200, damping: 15 });
+function Shell({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <motion.a ref={ref} href={href} style={{ x, y, ...(primary ? { background: ACCENT } : {}) }}
-      onMouseMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        x.set((e.clientX - r.left - r.width / 2) * 0.3);
-        y.set((e.clientY - r.top - r.height / 2) * 0.3);
-      }}
-      onMouseLeave={() => { x.set(0); y.set(0); }}
-      className={`inline-flex items-center gap-2 px-7 py-4 rounded-full font-bold text-sm md:text-base ${primary ? "text-black" : "border border-white/20 text-white"}`}>
+    <div className={`w-[230px] h-[470px] rounded-[40px] border-[6px] border-zinc-800 bg-[#0B0B0B] overflow-hidden shadow-2xl shadow-black ${className}`}>
       {children}
-    </motion.a>
+    </div>
   );
 }
 
-function Tilt({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const rx = useSpring(0, { stiffness: 150, damping: 15 });
-  const ry = useSpring(0, { stiffness: 150, damping: 15 });
+function ScreenHome() {
   return (
-    <motion.div ref={ref} className={className} style={{ rotateX: rx, rotateY: ry, transformPerspective: 1000 }}
-      onMouseMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        ry.set(((e.clientX - r.left) / r.width - 0.5) * 18);
-        rx.set(-((e.clientY - r.top) / r.height - 0.5) * 18);
-      }}
-      onMouseLeave={() => { rx.set(0); ry.set(0); }}>
-      {children}
-    </motion.div>
-  );
-}
-
-function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
-  return (
-    <motion.div className={className} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}>
-      {children}
-    </motion.div>
-  );
-}
-
-function PhoneMock() {
-  return (
-    <div className="w-[260px] h-[540px] rounded-[44px] border-[7px] border-zinc-800 bg-[#0B0B0B] p-4 overflow-hidden shadow-2xl shadow-black">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-black text-black" style={{ background: ACCENT }}>IT</div>
-        <span className="text-xs">Iron Tribe</span>
+    <div className="p-3.5">
+      <p className="text-[10px] text-gray-400">Hello, Rohan</p>
+      <p className={`${display.className} text-xl leading-none mt-1`}>Ready to crush<br /><span style={{ color: ACCENT }}>your goals?</span></p>
+      <div className="mt-3 p-3 rounded-2xl flex justify-between items-center text-black" style={{ background: ACCENT }}>
+        <div><p className="text-[9px]">Current streak</p><p className={`${display.className} text-xl`}>12 days</p></div>
+        <Flame size={24} fill="#000" />
       </div>
-      <p className="mt-6 text-[11px] text-gray-400">Hello, Rohan</p>
-      <p className={`${display.className} text-2xl leading-none mt-1`}>Ready to crush<br /><span style={{ color: ACCENT }}>your goals?</span></p>
-      <div className="mt-4 p-3 rounded-2xl flex justify-between items-center text-black" style={{ background: ACCENT }}>
-        <div><p className="text-[10px]">Current streak</p><p className={`${display.className} text-2xl`}>12 days</p></div>
-        <Flame size={30} fill="#000" />
-      </div>
-      <div className="mt-3 grid grid-cols-7 gap-1">
+      <div className="mt-2.5 grid grid-cols-7 gap-1">
         {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
-          <div key={i} className="py-1.5 rounded-lg text-center text-[10px]"
-            style={i < 3 ? { background: ACCENT, color: "#000" } : i === 3 ? { border: `1.5px solid ${ACCENT}`, color: ACCENT } : { background: "#1B1B1B", color: "#777" }}>{d}</div>
+          <div key={i} className="py-1 rounded-md text-center text-[9px]"
+            style={i < 3 ? { background: ACCENT, color: "#000" } : i === 3 ? { border: `1px solid ${ACCENT}`, color: ACCENT } : { background: "#1B1B1B", color: "#777" }}>{d}</div>
         ))}
       </div>
-      <div className="mt-3 relative h-36 rounded-2xl overflow-hidden">
-        <Photo src="/images/legs.jpg?v=mock" className="absolute inset-0 w-full h-full object-cover grayscale" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1B1B1B] via-[#1B1B1B]/70 to-transparent" />
+      <div className="mt-2.5 relative h-32 rounded-2xl overflow-hidden">
+        <img src={px(5327530, 500)} alt="" className="absolute inset-0 w-full h-full object-cover grayscale" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1B1B1B] to-transparent" />
         <div className="relative p-3">
-          <p className="text-[10px]" style={{ color: ACCENT }}>Thu · Smart plan</p>
-          <p className={`${display.className} text-lg leading-none mt-1`}>Legs day</p>
-          <div className="mt-6 inline-flex items-center gap-2 pl-3 pr-1 py-1 rounded-full text-[10px] font-bold text-black" style={{ background: ACCENT }}>
-            Start workout <span className="w-5 h-5 rounded-full bg-black flex items-center justify-center"><Play size={8} fill={ACCENT} color={ACCENT} /></span>
-          </div>
+          <p className="text-[9px]" style={{ color: ACCENT }}>Thu · Smart plan</p>
+          <p className={`${display.className} text-base mt-0.5`}>Legs day</p>
+          <span className="mt-5 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-bold text-black" style={{ background: ACCENT }}>
+            Start <Play size={8} fill="#000" />
+          </span>
         </div>
       </div>
-      <div className="mt-3 grid grid-cols-4 gap-1.5">
-        {["material-symbols:fitness-center", "material-symbols:monitor-weight", "material-symbols:sports-score", "material-symbols:headphones"].map((ic) => (
-          <div key={ic} className="py-2.5 rounded-xl bg-[#1B1B1B] flex justify-center"><Icon icon={ic} width={18} color={ACCENT} /></div>
+    </div>
+  );
+}
+
+function ScreenCheckin() {
+  return (
+    <div className="h-full flex flex-col items-center justify-center text-center p-4">
+      <div className="w-20 h-20 rounded-full flex items-center justify-center text-black" style={{ background: ACCENT, boxShadow: `0 0 0 10px ${ACCENT}33` }}>
+        <MapPin size={32} />
+      </div>
+      <p className="mt-5 text-[10px]" style={{ color: ACCENT }}>Checked in</p>
+      <p className={`${display.className} text-2xl leading-none mt-1`}>Welcome back,<br /><span style={{ color: ACCENT }}>Rohan!</span></p>
+      <p className="mt-3 text-[10px] text-gray-400 italic">&ldquo;The hardest rep is walking through the door.&rdquo;</p>
+      <div className="mt-4 grid grid-cols-2 gap-2 w-full">
+        {[["14", "This month"], ["86", "Total"]].map(([v, l]) => (
+          <div key={l} className="p-2.5 rounded-xl bg-[#1B1B1B]"><p className={`${display.className} text-lg`}>{v}</p><p className="text-[9px] text-gray-400">{l}</p></div>
         ))}
       </div>
     </div>
   );
 }
 
-function DashboardMock() {
+function ScreenOwner() {
   return (
-    <div className="w-full max-w-[460px] rounded-3xl bg-zinc-950 border border-zinc-800 p-5 shadow-2xl shadow-black">
-      <div className="flex justify-between items-center">
-        <p className={`${display.className} text-xl`}>Your <span style={{ color: ACCENT }}>crew</span></p>
-        <span className="text-[10px] px-2.5 py-1 rounded-full text-black font-bold" style={{ background: ACCENT }}>Live</span>
-      </div>
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        {[["In today", "38"], ["Expiring", "6"], ["This month", "₹1.2L"]].map(([l, v], i) => (
-          <div key={l} className="p-3 rounded-2xl" style={i === 0 ? { background: ACCENT, color: "#000" } : { background: "#18181b" }}>
-            <p className="text-[10px] opacity-70">{l}</p>
-            <p className={`${display.className} text-xl`}>{v}</p>
+    <div className="p-3.5">
+      <p className={`${display.className} text-lg`}>Your <span style={{ color: ACCENT }}>crew</span></p>
+      <div className="mt-2.5 grid grid-cols-2 gap-1.5">
+        {[["In today", "38"], ["Due", "₹12k"]].map(([l, v], k) => (
+          <div key={l} className="p-2.5 rounded-xl" style={k === 0 ? { background: ACCENT, color: "#000" } : { background: "#1B1B1B" }}>
+            <p className="text-[9px] opacity-70">{l}</p><p className={`${display.className} text-lg`}>{v}</p>
           </div>
         ))}
       </div>
-      <div className="mt-3 flex items-end gap-1 h-20 p-3 rounded-2xl bg-zinc-900">
-        {[30, 45, 38, 60, 52, 70, 64, 80, 58, 72, 90, 76, 84, 95].map((h, i) => (
-          <div key={i} className="flex-1 rounded-sm" style={{ height: `${h}%`, background: i === 13 ? ACCENT : "#3f3f46" }} />
+      <div className="mt-2.5 flex items-end gap-0.5 h-20 p-2.5 rounded-xl bg-[#1B1B1B]">
+        {[30, 45, 38, 60, 52, 70, 64, 80, 58, 72, 90, 95].map((h, k) => (
+          <div key={k} className="flex-1 rounded-sm" style={{ height: `${h}%`, background: k === 11 ? ACCENT : "#3f3f46" }} />
         ))}
       </div>
-      <div className="mt-3 grid gap-1.5">
-        {[["Aarav", "Checked in 7:12 AM", true], ["Priya", "Plan ends in 3 days", false], ["Kabir", "Missing 9 days", false]].map(([n, s, ok]) => (
-          <div key={n as string} className="px-3 py-2 rounded-xl bg-zinc-900 flex justify-between items-center text-xs">
-            <span className="font-bold">{n as string}</span>
-            <span style={{ color: ok ? ACCENT : "#fb923c" }}>{s as string}</span>
-          </div>
-        ))}
-      </div>
-      <p className="mt-3 text-[10px] text-gray-600 text-center">Sample data</p>
+      {[["Aarav", "In 7:12 AM", true], ["Priya", "3 days left", false], ["Kabir", "Missing 9d", false]].map(([n, s, ok]) => (
+        <div key={n as string} className="mt-1.5 px-2.5 py-2 rounded-lg bg-[#1B1B1B] flex justify-between text-[10px]">
+          <span className="font-bold">{n as string}</span><span style={{ color: ok ? ACCENT : "#fb923c" }}>{s as string}</span>
+        </div>
+      ))}
+      <p className="mt-2 text-[8px] text-gray-600 text-center">Sample data</p>
     </div>
   );
 }
 
 export default function Landing() {
-  const [menu, setMenu] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const hero = useRef<HTMLDivElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(heroProgress, [0, 1], ["0%", "35%"]);
-  const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
-
-  const reelRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: reelProgress } = useScroll({ target: reelRef, offset: ["start start", "end end"] });
-  const reelX = useTransform(reelProgress, [0, 1], ["5%", "-62%"]);
-
-  const mx = useMotionValue(-400);
-  const my = useMotionValue(-400);
-  const glowX = useSpring(mx, { stiffness: 120, damping: 20 });
-  const glowY = useSpring(my, { stiffness: 120, damping: 20 });
-
   const wa = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi! I want a demo of ${BRAND} for my gym.`)}`;
-  const navLinks = [["Features", "#features"], ["How it works", "#how"], ["Pricing", "#pricing"], ["FAQ", "#faq"]];
+
+  useGSAP(
+    () => {
+      const counter = { v: 0 };
+      const countEl = root.current?.querySelector(".pre-count");
+      const title = SplitText.create(".hero-line", { type: "chars", mask: "chars" });
+
+      const intro = gsap.timeline();
+      intro
+        .to(counter, {
+          v: 100,
+          duration: 1.6,
+          ease: "power2.inOut",
+          onUpdate: () => { if (countEl) countEl.textContent = String(Math.round(counter.v)); },
+        })
+        .to(".pre", { yPercent: -100, duration: 1, ease: "expo.inOut" })
+        .from(title.chars, { yPercent: 110, duration: 1, ease: "expo.out", stagger: 0.025 }, "-=0.4")
+        .from(".sticker", { scale: 0, rotate: -40, duration: 0.7, ease: "back.out(2)", stagger: 0.12 }, "-=0.5")
+        .from(".hero-fade", { opacity: 0, y: 20, duration: 0.8, stagger: 0.1 }, "-=0.5");
+
+      gsap.utils.toArray<HTMLElement>(".hero-move").forEach((el, i) => {
+        gsap.to(el, {
+          xPercent: i % 2 ? 15 : -15,
+          ease: "none",
+          scrollTrigger: { trigger: hero.current, start: "top top", end: "bottom top", scrub: true },
+        });
+      });
+
+      const loop = gsap.to(".marquee-track", { xPercent: -50, repeat: -1, duration: 22, ease: "none" });
+      ScrollTrigger.create({
+        onUpdate: (self) => {
+          const v = self.getVelocity();
+          const speed = 1 + Math.min(Math.abs(v) / 250, 6);
+          gsap.to(loop, { timeScale: v < 0 ? -speed : speed, duration: 0.2, overwrite: true });
+          gsap.to(loop, { timeScale: v < 0 ? -1 : 1, duration: 1.2, delay: 0.25, overwrite: false });
+        },
+      });
+
+      const words = SplitText.create(".highlight", { type: "words" });
+      gsap.fromTo(words.words, { opacity: 0.12 }, {
+        opacity: 1, stagger: 0.05, ease: "none",
+        scrollTrigger: { trigger: ".highlight", start: "top 80%", end: "bottom 45%", scrub: true },
+      });
+
+      const expand = gsap.timeline({ scrollTrigger: { trigger: ".expand-wrap", start: "top top", end: "+=150%", scrub: 1, pin: true } });
+      expand
+        .fromTo(".expand", { clipPath: "inset(25% 32% 25% 32% round 28px)" }, { clipPath: "inset(0% 0% 0% 0% round 0px)", ease: "none" })
+        .fromTo(".expand img", { scale: 1.4 }, { scale: 1, ease: "none" }, 0)
+        .fromTo(".expand-text", { opacity: 0, y: 60 }, { opacity: 1, y: 0 }, 0.55);
+
+      const fan = gsap.timeline({ scrollTrigger: { trigger: ".fan-wrap", start: "top top", end: "+=120%", scrub: 1, pin: true } });
+      fan
+        .fromTo(".fan-left", { xPercent: 0, rotate: 0 }, { xPercent: -95, rotate: -10, ease: "power2.out" })
+        .fromTo(".fan-right", { xPercent: 0, rotate: 0 }, { xPercent: 95, rotate: 10, ease: "power2.out" }, "<")
+        .fromTo(".fan-mid", { scale: 0.9 }, { scale: 1.05, ease: "power2.out" }, "<")
+        .fromTo(".fan-title", { opacity: 0, y: 40 }, { opacity: 1, y: 0 }, "<0.2");
+
+      gsap.utils.toArray<HTMLElement>(".row").forEach((el) => {
+        gsap.from(el, { opacity: 0, y: 40, duration: 0.9, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 90%" } });
+      });
+
+      const cards = gsap.utils.toArray<HTMLElement>(".stack-card");
+      cards.forEach((card, i) => {
+        const next = cards[i + 1];
+        if (!next) return;
+        gsap.to(card, { scale: 0.9, filter: "brightness(0.5)", ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top 15%", scrub: true } });
+      });
+
+      gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
+        gsap.from(el, { opacity: 0, y: 50, duration: 1, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 88%" } });
+      });
+
+      const cleanups: (() => void)[] = [];
+
+      const heroEl = hero.current;
+      const imgs = gsap.utils.toArray<HTMLImageElement>(".trail");
+      let idx = 0;
+      let last = { x: -999, y: -999 };
+      const onTrail = (e: PointerEvent) => {
+        if (!heroEl || Math.hypot(e.clientX - last.x, e.clientY - last.y) < 80) return;
+        last = { x: e.clientX, y: e.clientY };
+        const img = imgs[idx % imgs.length];
+        idx++;
+        const r = heroEl.getBoundingClientRect();
+        gsap.killTweensOf(img);
+        gsap.set(img, { x: e.clientX - r.left - 70, y: e.clientY - r.top - 90, scale: 0.5, opacity: 1, rotate: gsap.utils.random(-14, 14), zIndex: idx });
+        gsap.to(img, { scale: 1, duration: 0.45, ease: "back.out(2)" });
+        gsap.to(img, { opacity: 0, scale: 0.8, duration: 0.6, delay: 0.55, ease: "power2.in" });
+      };
+      heroEl?.addEventListener("pointermove", onTrail);
+      cleanups.push(() => heroEl?.removeEventListener("pointermove", onTrail));
+
+      const floater = root.current?.querySelector<HTMLElement>(".floater");
+      const floaterImg = floater?.querySelector("img");
+      if (floater && floaterImg) {
+        const xTo = gsap.quickTo(floater, "x", { duration: 0.5, ease: "power3" });
+        const yTo = gsap.quickTo(floater, "y", { duration: 0.5, ease: "power3" });
+        const onMove = (e: PointerEvent) => { xTo(e.clientX - 130); yTo(e.clientY - 170); };
+        window.addEventListener("pointermove", onMove);
+        cleanups.push(() => window.removeEventListener("pointermove", onMove));
+        gsap.utils.toArray<HTMLElement>(".row").forEach((row) => {
+          const enter = () => {
+            floaterImg.src = row.dataset.img || "";
+            gsap.to(floater, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" });
+          };
+          const leave = () => gsap.to(floater, { opacity: 0, scale: 0.7, duration: 0.3 });
+          row.addEventListener("pointerenter", enter);
+          row.addEventListener("pointerleave", leave);
+          cleanups.push(() => {
+            row.removeEventListener("pointerenter", enter);
+            row.removeEventListener("pointerleave", leave);
+          });
+        });
+      }
+
+      return () => cleanups.forEach((fn) => fn());
+    },
+    { scope: root }
+  );
 
   return (
-    <main className="bg-[#070707] text-white overflow-x-clip selection:bg-lime-300 selection:text-black"
-      onMouseMove={(e) => { mx.set(e.clientX - 200); my.set(e.clientY - 200); }}>
-
-      <motion.div className="pointer-events-none fixed top-0 left-0 z-0 w-[400px] h-[400px] rounded-full hidden md:block"
-        style={{ x: glowX, y: glowY, background: `radial-gradient(circle, ${ACCENT}22 0%, transparent 65%)` }} />
-      <div className="pointer-events-none fixed inset-0 z-[60] opacity-[0.07] mix-blend-overlay" style={{ backgroundImage: GRAIN }} />
-
-      <header className="fixed top-0 inset-x-0 z-50">
-        <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2">
-            <span className="w-9 h-9 rounded-xl flex items-center justify-center text-black" style={{ background: ACCENT }}>
-              <Icon icon="mdi:weight-lifter" width={22} />
-            </span>
-            <span className={`${display.className} text-lg`}>{BRAND}</span>
-          </a>
-          <nav className="hidden md:flex items-center gap-1 px-2 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
-            {navLinks.map(([l, h]) => (
-              <a key={l} href={h} className="px-4 py-2 rounded-full text-sm text-gray-300 hover:text-white hover:bg-white/10 transition">{l}</a>
-            ))}
-          </nav>
-          <div className="hidden md:flex items-center gap-2">
-            <Link href="/login" className="px-4 py-2 text-sm text-gray-300 hover:text-white">Owner login</Link>
-            <a href="#demo" className="px-5 py-2.5 rounded-full text-sm font-bold text-black" style={{ background: ACCENT }}>Book a demo</a>
-          </div>
-          <button onClick={() => setMenu(true)} className="md:hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center" aria-label="Menu">
-            <Menu size={18} />
-          </button>
+    <SmoothScroll>
+      <main ref={root} className="bg-black text-white overflow-x-clip selection:bg-[#D4F75C] selection:text-black">
+        <div className="pre fixed inset-0 z-[100] flex items-end justify-between p-6 md:p-10 text-black" style={{ background: ACCENT }}>
+          <span className={`${display.className} text-2xl`}>{BRAND}</span>
+          <span className={`pre-count ${display.className} text-[28vw] md:text-[18vw] leading-[0.8]`}>0</span>
         </div>
-      </header>
 
-      <AnimatePresence>
-        {menu && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[70] bg-black/95 p-6 flex flex-col">
-            <button onClick={() => setMenu(false)} className="self-end w-10 h-10 rounded-full bg-white/10 flex items-center justify-center" aria-label="Close"><X size={18} /></button>
-            <div className="mt-10 grid gap-6">
-              {[...navLinks, ["Owner login", "/login"]].map(([l, h], i) => (
-                <motion.a key={l} href={h} onClick={() => setMenu(false)} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                  className={`${display.className} text-4xl`}>{l}</motion.a>
-              ))}
+        <div className="floater fixed top-0 left-0 z-40 w-[260px] h-[340px] rounded-3xl overflow-hidden pointer-events-none opacity-0 scale-75 hidden md:block">
+          <img src="" alt="" className="w-full h-full object-cover grayscale" />
+        </div>
+
+        <header className="fixed top-0 inset-x-0 z-50">
+          <div className="px-5 md:px-8 py-5 flex justify-between items-center">
+            <span className={`${display.className} text-xl px-3 py-1 -rotate-2 text-black`} style={{ background: ACCENT }}>{BRAND}</span>
+            <div className="flex items-center gap-3 text-sm">
+              <Link href="/download" className="hidden md:inline hover:text-[#D4F75C]">Get the app</Link>
+              <Link href="/login" className="hidden md:inline hover:text-[#D4F75C]">Owner login</Link>
+              <a href="#demo" className="px-4 py-2 bg-white text-black font-bold hover:bg-[#D4F75C] transition-colors">BOOK DEMO</a>
             </div>
-            <a href="#demo" onClick={() => setMenu(false)} className="mt-auto py-4 rounded-full text-center font-bold text-black" style={{ background: ACCENT }}>Book a demo</a>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <section ref={heroRef} className="relative min-h-screen flex items-center pt-24 overflow-hidden">
-        <div className="absolute inset-0">
-          <video className="w-full h-full object-cover grayscale opacity-30" autoPlay muted loop playsInline
-            poster="https://images.pexels.com/photos/9152548/pexels-photo-9152548.jpeg?auto=compress&cs=tinysrgb&w=1600">
-            <source src="/videos/hero.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#070707] via-[#070707]/60 to-[#070707]" />
-        </div>
-
-        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative z-10 max-w-7xl mx-auto px-5 w-full grid lg:grid-cols-2 items-center gap-6">
-          <div>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs text-gray-300">
-              <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: ACCENT }} /> Built for gyms in India
-            </motion.p>
-            <h1 className={`${display.className} mt-6 text-[13vw] lg:text-[6.2rem] leading-[0.9] tracking-tight`}>
-              {["Your gym.", "Your app."].map((line, i) => (
-                <motion.span key={line} className="block" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + i * 0.12, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>{line}</motion.span>
-              ))}
-              <motion.span className="block italic" style={{ color: ACCENT }} initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.44, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>Zero code.</motion.span>
-            </h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-              className="mt-6 max-w-md text-gray-400 text-lg">
-              Give every member a branded fitness app with smart workout plans, QR check-in and streaks. Run your gym from one dashboard.
-            </motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.85 }} className="mt-8 flex flex-wrap gap-3">
-              <MagneticButton href="#demo" primary>Book a free demo <ArrowRight size={18} /></MagneticButton>
-              <MagneticButton href="#features">See features</MagneticButton>
-            </motion.div>
           </div>
+        </header>
 
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, duration: 1 }}
-            className="relative h-[46vh] lg:h-[70vh] cursor-grab active:cursor-grabbing">
-            <div className="absolute inset-[15%] rounded-full blur-3xl opacity-30" style={{ background: ACCENT }} />
-            <Dumbbell3D accent={ACCENT} />
-            <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] text-gray-500 whitespace-nowrap">Drag to spin it ↻</p>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      <div className="relative z-10 -rotate-2 py-5 overflow-hidden text-black" style={{ background: ACCENT }}>
-        <motion.div className={`${display.className} flex whitespace-nowrap text-3xl md:text-5xl`}
-          animate={{ x: ["0%", "-50%"] }} transition={{ repeat: Infinity, duration: 18, ease: "linear" }}>
-          {Array.from({ length: 2 }).map((_, k) => (
-            <span key={k} className="flex">
-              {["NO DAYS OFF", "STRONGER EVERY DAY", "SHOW UP", "LIFT", "REPEAT", "YOUR GYM IN THEIR POCKET"].map((t) => (
-                <span key={t} className="px-6 flex items-center gap-6">{t} <span>✦</span></span>
-              ))}
-            </span>
+        <section ref={hero} className="relative h-[100svh] flex flex-col justify-center overflow-hidden cursor-crosshair touch-pan-y">
+          {TRAIL.map((id) => (
+            <img key={id} src={px(id, 500)} alt="" className="trail absolute top-0 left-0 w-36 h-48 md:w-40 md:h-52 object-cover grayscale opacity-0 pointer-events-none rounded-lg" />
           ))}
-        </motion.div>
-      </div>
+          {[["SHOW UP.", "#fff"], ["LIFT HEAVY.", ACCENT], ["REPEAT.", "stroke"]].map(([t, c]) => (
+            <p key={t} className={`hero-line hero-move ${display.className} relative z-[1] text-[17vw] leading-[0.86] whitespace-nowrap px-4 pointer-events-none`}
+              style={c === "stroke" ? { color: "transparent", WebkitTextStroke: "2px #fff" } : { color: c }}>
+              {t}
+            </p>
+          ))}
+          <span className="sticker absolute top-[22%] right-[8%] z-[2] rotate-12 px-4 py-2 text-black font-black text-xs md:text-sm" style={{ background: ACCENT }}>
+            MADE FOR INDIAN GYMS
+          </span>
+          <span className="sticker absolute bottom-[16%] left-[6%] z-[2] -rotate-6 px-4 py-2 bg-white text-black font-black text-xs md:text-sm">
+            YOUR GYM. YOUR APP.
+          </span>
+          <div className="hero-fade absolute bottom-6 inset-x-5 md:inset-x-8 z-[2] flex justify-between items-end text-xs text-gray-400">
+            <span className="max-w-[220px]">The member app and owner dashboard that keeps people coming back.</span>
+            <span className="hidden md:inline">move your mouse ↗</span>
+          </div>
+        </section>
 
-      <section className="relative z-10 max-w-7xl mx-auto px-5 py-28 md:py-36">
-        <Reveal>
-          <h2 className={`${display.className} text-5xl md:text-7xl leading-[0.95] max-w-4xl`}>
-            Members get an <span className="italic" style={{ color: ACCENT }}>app.</span><br />You get a <span className="italic" style={{ color: ACCENT }}>control room.</span>
-          </h2>
-        </Reveal>
-        <div className="mt-16 grid lg:grid-cols-2 gap-10 items-center">
-          <Reveal className="flex flex-col items-center">
-            <Tilt><PhoneMock /></Tilt>
-            <p className="mt-6 text-gray-400 text-center max-w-sm">Streaks, smart plans, form videos and one-tap check-in. In your colors.</p>
-          </Reveal>
-          <Reveal delay={0.15} className="flex flex-col items-center">
-            <Tilt className="w-full flex justify-center"><DashboardMock /></Tilt>
-            <p className="mt-6 text-gray-400 text-center max-w-sm">Who&apos;s in today, who&apos;s expiring, who&apos;s slipping away. One glance.</p>
-          </Reveal>
-        </div>
-      </section>
-
-      <section ref={reelRef} className="relative z-10 h-[300vh]">
-        <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
-          <p className="px-5 max-w-7xl mx-auto w-full text-sm text-gray-500 mb-6">Every day has a plan ↓</p>
-          <motion.div style={{ x: reelX }} className="flex gap-5 pl-5">
-            {REEL.map((r, i) => (
-              <div key={r.label} className="group relative shrink-0 w-[72vw] md:w-[38vw] h-[60vh] rounded-[2rem] overflow-hidden">
-                <Photo src={r.img} className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <span className="absolute top-5 left-5 text-xs px-3 py-1 rounded-full bg-black/60 backdrop-blur">0{i + 1}</span>
-                <p className={`${display.className} absolute bottom-5 left-6 text-5xl md:text-7xl`} style={{ color: i % 2 ? "#fff" : ACCENT }}>{r.label}</p>
-              </div>
+        <div className="py-6 border-y-2 border-white overflow-hidden" style={{ background: ACCENT }}>
+          <div className={`marquee-track ${display.className} flex whitespace-nowrap text-black text-4xl md:text-6xl`}>
+            {Array.from({ length: 2 }).map((_, k) => (
+              <span key={k} className="flex">
+                {["NO DAYS OFF", "STREAKS", "SMART PLANS", "QR CHECK-IN", "YOUR BRAND", "LET'S GO"].map((t) => (
+                  <span key={t} className="px-6">{t} ●</span>
+                ))}
+              </span>
             ))}
-          </motion.div>
+          </div>
         </div>
-      </section>
 
-      <section id="features" className="relative z-10 max-w-7xl mx-auto px-5 py-28">
-        <Reveal>
-          <p className="text-sm" style={{ color: ACCENT }}>Features</p>
-          <h2 className={`${display.className} mt-3 text-5xl md:text-7xl leading-[0.95]`}>Everything a<br />modern gym <span className="italic" style={{ color: ACCENT }}>needs.</span></h2>
-        </Reveal>
-        <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {FEATURES.map((f, i) => (
-            <Reveal key={f.title} delay={(i % 4) * 0.08} className={f.big ? "lg:col-span-2" : ""}>
-              <motion.div whileHover={{ y: -6 }} className="group h-full p-7 rounded-[2rem] bg-zinc-900/80 border border-white/5 hover:border-white/20 transition relative overflow-hidden">
-                <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full blur-3xl opacity-0 group-hover:opacity-30 transition" style={{ background: ACCENT }} />
-                <span className="relative w-14 h-14 rounded-2xl flex items-center justify-center text-black" style={{ background: ACCENT }}>
-                  <Icon icon={f.icon} width={30} />
-                </span>
-                <p className={`${display.className} relative mt-8 text-2xl leading-tight`}>{f.title}</p>
-                <p className="relative mt-3 text-gray-400">{f.text}</p>
-              </motion.div>
-            </Reveal>
+        <section className="px-5 md:px-10 py-32 md:py-48">
+          <p className={`highlight ${display.className} text-4xl md:text-7xl leading-[1.05] max-w-6xl`}>
+            Half of new members quit in their first three months. Not because they don&apos;t care, but because nothing reminds them why they started. We fix that.
+          </p>
+        </section>
+
+        <section className="expand-wrap relative h-screen overflow-hidden">
+          <div className="expand absolute inset-0 overflow-hidden">
+            <img src={px(20873830, 1800)} alt="" className="w-full h-full object-cover grayscale" />
+            <div className="absolute inset-0 bg-black/40" />
+          </div>
+          <div className="expand-text absolute inset-0 flex items-center justify-center text-center px-6">
+            <p className={`${display.className} text-5xl md:text-8xl leading-[0.9]`}>
+              Your gym,<br /><span style={{ color: ACCENT }}>in their pocket.</span>
+            </p>
+          </div>
+        </section>
+
+        <section className="fan-wrap relative h-screen overflow-hidden flex flex-col items-center justify-center">
+          <p className={`fan-title ${display.className} absolute top-[10%] text-center text-4xl md:text-6xl px-5`}>
+            Members get an <span style={{ color: ACCENT }}>app.</span> You get <span style={{ color: ACCENT }}>control.</span>
+          </p>
+          <div className="relative mt-16 flex items-center justify-center">
+            <Shell className="fan-left absolute"><ScreenCheckin /></Shell>
+            <Shell className="fan-right absolute"><ScreenOwner /></Shell>
+            <Shell className="fan-mid relative z-10"><ScreenHome /></Shell>
+          </div>
+        </section>
+
+        <section className="px-5 md:px-10 py-24">
+          <p className="text-sm text-gray-500 mb-6">What&apos;s inside</p>
+          {ROWS.map((r, i) => (
+            <div key={r.name} data-img={px(r.img, 600)}
+              className="row group border-t border-white/15 py-8 md:py-12 grid md:grid-cols-[80px_1fr_1fr] gap-3 items-baseline cursor-default">
+              <span className="text-sm text-gray-500">0{i + 1}</span>
+              <span className={`${display.className} text-4xl md:text-7xl group-hover:text-[#D4F75C] group-hover:translate-x-3 transition-all duration-500`}>{r.name}</span>
+              <span className="text-gray-400 md:text-lg md:text-right">{r.text}</span>
+            </div>
           ))}
-        </div>
-      </section>
+          <div className="border-t border-white/15" />
+        </section>
 
-      <section id="how" className="relative z-10 max-w-7xl mx-auto px-5 py-28">
-        <Reveal>
-          <h2 className={`${display.className} text-5xl md:text-7xl leading-[0.95]`}>Live in <span className="italic" style={{ color: ACCENT }}>3 steps.</span></h2>
-        </Reveal>
-        <div className="mt-14 grid md:grid-cols-3 gap-4">
-          {[
-            ["We set up your gym", "Your logo, colors and owner login, ready the same day."],
-            ["Add your members", "Plans, expiry and login details shared on WhatsApp in one tap."],
-            ["They show up more", "Smart plans, streaks and reminders keep them coming back."],
-          ].map(([t, d], i) => (
-            <Reveal key={t} delay={i * 0.12}>
-              <div className="relative p-8 rounded-[2rem] bg-zinc-900/80 border border-white/5 h-full">
-                <p className={`${display.className} text-8xl leading-none opacity-10`}>0{i + 1}</p>
-                <p className={`${display.className} -mt-8 text-2xl`}>{t}</p>
-                <p className="mt-3 text-gray-400">{d}</p>
+        <section className="px-4 md:px-10 py-24">
+          <p className={`${display.className} text-5xl md:text-8xl leading-[0.9] mb-16`}>WHAT YOU<br /><span style={{ color: ACCENT }}>GET.</span></p>
+          {CARDS.map((c, i) => (
+            <div key={c.title} className="stack-card sticky mb-6 h-[70vh] min-h-[440px] rounded-[2rem] overflow-hidden grid md:grid-cols-2"
+              style={{ top: `calc(10vh + ${i * 18}px)`, background: c.bg, color: c.fg }}>
+              <div className="p-8 md:p-12 flex flex-col justify-between">
+                <span className="text-sm font-bold">0{i + 1}</span>
+                <div>
+                  <p className={`${display.className} text-5xl md:text-7xl leading-[0.9]`}>{c.title}</p>
+                  <p className="mt-4 text-lg opacity-80 max-w-sm">{c.text}</p>
+                </div>
               </div>
-            </Reveal>
+              <img src={px(c.img, 1000)} alt="" className="hidden md:block w-full h-full object-cover grayscale" />
+            </div>
           ))}
-        </div>
-      </section>
+        </section>
 
-      <section id="pricing" className="relative z-10 max-w-7xl mx-auto px-5 py-28">
-        <Reveal>
-          <h2 className={`${display.className} text-5xl md:text-7xl leading-[0.95]`}>Simple <span className="italic" style={{ color: ACCENT }}>pricing.</span></h2>
-          <p className="mt-4 text-gray-400">Per gym, per month. No setup fee.</p>
-        </Reveal>
-        <div className="mt-14 grid md:grid-cols-3 gap-4 items-stretch">
-          {[
-            { name: "Starter", price: PRICES.starter, note: "Up to 150 members", items: ["Branded member app", "Members & plans", "Expiry reminders", "Workout library"], hot: false },
-            { name: "Pro", price: PRICES.pro, note: "Unlimited members", items: ["Everything in Starter", "QR + geofence check-in", "Smart workout plans", "Push notifications", "Attendance insights"], hot: true },
-            { name: "Chain", price: "Let's talk", note: "Multiple branches", items: ["Everything in Pro", "Multi-branch dashboard", "Priority support", "Custom onboarding"], hot: false },
-          ].map((p, i) => (
-            <Reveal key={p.name} delay={i * 0.1}>
-              <motion.div whileHover={{ y: -8 }} className={`relative h-full p-8 rounded-[2rem] border flex flex-col ${p.hot ? "text-black" : "bg-zinc-900/80 border-white/5"}`}
+        <section className="px-5 md:px-10 py-24">
+          <p className={`reveal ${display.className} text-5xl md:text-8xl leading-[0.9]`}>SIMPLE<br /><span style={{ color: ACCENT }}>PRICING.</span></p>
+          <p className="reveal mt-4 text-gray-400">Per gym, per month. No setup fee.</p>
+          <div className="mt-12 grid md:grid-cols-3 gap-4">
+            {[
+              { name: "Starter", price: PRICES.starter, note: "Up to 150 members", items: ["Branded member app", "Members, plans and dues", "Expiry reminders", "Workout library"], hot: false },
+              { name: "Pro", price: PRICES.pro, note: "Unlimited members", items: ["Everything in Starter", "QR + geofence check-in", "Smart workout plans", "Push notifications", "Insights dashboard"], hot: true },
+              { name: "Chain", price: "Let's talk", note: "Multiple branches", items: ["Everything in Pro", "Multi-branch view", "Priority support", "Custom onboarding"], hot: false },
+            ].map((p) => (
+              <div key={p.name} className={`reveal p-8 rounded-[2rem] border-2 flex flex-col ${p.hot ? "text-black" : "border-white/20"}`}
                 style={p.hot ? { background: ACCENT, borderColor: ACCENT } : {}}>
-                {p.hot && <span className="absolute top-6 right-6 text-xs px-3 py-1 rounded-full bg-black text-white">Most popular</span>}
-                <p className="text-lg">{p.name}</p>
+                <p className="font-bold">{p.name}{p.hot && <span className="ml-2 text-xs px-2 py-0.5 bg-black text-white">POPULAR</span>}</p>
                 <p className={`${display.className} mt-4 text-5xl`}>{p.price}<span className="text-base opacity-60">{p.price.startsWith("₹") ? "/mo" : ""}</span></p>
                 <p className={`mt-1 text-sm ${p.hot ? "opacity-70" : "text-gray-400"}`}>{p.note}</p>
-                <div className="mt-6 grid gap-3 flex-1">
-                  {p.items.map((it) => (
-                    <p key={it} className="flex items-center gap-2 text-sm"><Check size={16} strokeWidth={3} /> {it}</p>
-                  ))}
+                <div className="mt-6 grid gap-2.5 flex-1">
+                  {p.items.map((it) => <p key={it} className="flex items-center gap-2 text-sm"><Check size={16} strokeWidth={3} /> {it}</p>)}
                 </div>
-                <a href="#demo" className={`mt-8 py-3.5 rounded-full text-center font-bold ${p.hot ? "bg-black text-white" : "text-black"}`}
-                  style={p.hot ? {} : { background: ACCENT }}>Get started</a>
-              </motion.div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+                <a href="#demo" className={`mt-8 py-3.5 text-center font-bold ${p.hot ? "bg-black text-white" : "bg-white text-black"}`}>GET STARTED</a>
+              </div>
+            ))}
+          </div>
+        </section>
 
-      <section id="faq" className="relative z-10 max-w-3xl mx-auto px-5 py-28">
-        <Reveal>
-          <h2 className={`${display.className} text-5xl md:text-6xl leading-[0.95]`}>Questions<span style={{ color: ACCENT }}>?</span></h2>
-        </Reveal>
-        <div className="mt-10 grid gap-3">
-          {FAQS.map((f, i) => (
-            <Reveal key={f.q} delay={i * 0.05}>
-              <div className="rounded-3xl bg-zinc-900/80 border border-white/5 overflow-hidden">
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full p-6 flex justify-between items-center gap-4 text-left">
-                  <span className="font-bold">{f.q}</span>
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-black" style={{ background: ACCENT }}>
+        <section className="px-5 md:px-10 py-24 max-w-4xl">
+          <p className={`reveal ${display.className} text-5xl md:text-7xl`}>QUESTIONS<span style={{ color: ACCENT }}>?</span></p>
+          <div className="mt-10">
+            {FAQS.map((f, i) => (
+              <div key={f.q} className="border-t border-white/15">
+                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full py-6 flex justify-between items-center gap-4 text-left">
+                  <span className="text-lg md:text-xl font-bold">{f.q}</span>
+                  <span className="w-9 h-9 flex items-center justify-center shrink-0 text-black" style={{ background: ACCENT }}>
                     {openFaq === i ? <Minus size={16} /> : <Plus size={16} />}
                   </span>
                 </button>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.p initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6 text-gray-400">{f.a}</motion.p>
-                  )}
-                </AnimatePresence>
+                {openFaq === i && <p className="pb-6 text-gray-400 max-w-2xl">{f.a}</p>}
               </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+            ))}
+            <div className="border-t border-white/15" />
+          </div>
+        </section>
 
-      <section id="demo" className="relative z-10 max-w-7xl mx-auto px-5 py-28">
-        <div className="relative rounded-[2.5rem] overflow-hidden p-8 md:p-16 border border-white/10">
-          <Photo src="/images/hero.jpg" className="absolute inset-0 w-full h-full object-cover grayscale opacity-25" />
-          <div className="absolute inset-0 bg-gradient-to-br from-black via-black/80 to-transparent" />
-          <div className="relative grid lg:grid-cols-2 gap-10 items-center">
-            <Reveal>
-              <h2 className={`${display.className} text-5xl md:text-7xl leading-[0.95]`}>Ready to<br /><span className="italic" style={{ color: ACCENT }}>level up</span><br />your gym?</h2>
-              <p className="mt-5 text-gray-300 max-w-md">Book a free 15-minute demo. We&apos;ll set up your gym live and show you everything.</p>
-              <a href={wa} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-green-500 text-black font-bold">
-                <Icon icon="mdi:whatsapp" width={22} /> Chat on WhatsApp <ArrowUpRight size={16} />
-              </a>
-            </Reveal>
-            <Reveal delay={0.15}><LeadForm accent={ACCENT} /></Reveal>
+        <section id="demo" className="px-4 md:px-10 py-24">
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+            <div>
+              <p className={`reveal ${display.className} text-[15vw] md:text-[8vw] leading-[0.85]`}>BOOK A<br /><span style={{ color: ACCENT }}>DEMO.</span></p>
+              <p className="reveal mt-6 text-gray-300 max-w-md">15 minutes. We set up your gym live and show you everything.</p>
+              <div className="reveal mt-6 flex flex-wrap gap-3">
+                <a href={wa} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 bg-green-500 text-black font-bold">
+                  WhatsApp us <ArrowUpRight size={16} />
+                </a>
+                <Link href="/download" className="inline-flex items-center gap-2 px-6 py-3.5 border-2 border-white font-bold hover:bg-white hover:text-black transition-colors">
+                  <Download size={16} /> Get the app
+                </Link>
+              </div>
+            </div>
+            <div className="reveal"><LeadForm accent={ACCENT} /></div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <footer className="relative z-10 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-5 py-12 flex flex-col md:flex-row justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <span className="w-9 h-9 rounded-xl flex items-center justify-center text-black" style={{ background: ACCENT }}>
-              <Icon icon="mdi:weight-lifter" width={22} />
-            </span>
-            <span className={`${display.className} text-lg`}>{BRAND}</span>
+        <footer className="border-t-2 border-white">
+          <div className="px-5 md:px-10 py-10 flex flex-wrap justify-between gap-4 text-sm text-gray-400">
+            <span className={`${display.className} text-white text-lg`}>{BRAND}</span>
+            <div className="flex gap-6">
+              <Link href="/download" className="hover:text-white">Get the app</Link>
+              <Link href="/login" className="hover:text-white">Owner login</Link>
+              <a href={wa} className="hover:text-white">Contact</a>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-6 text-sm text-gray-400">
-            {navLinks.map(([l, h]) => <a key={l} href={h} className="hover:text-white">{l}</a>)}
-            <Link href="/login" className="hover:text-white">Owner login</Link>
-          </div>
-        </div>
-        <p className={`${display.className} text-center text-[18vw] leading-none opacity-[0.04] select-none pb-4`}>{BRAND}</p>
-      </footer>
-    </main>
+          <p className={`${display.className} text-center text-[22vw] leading-[0.8] pb-2 select-none`} style={{ color: ACCENT }}>{BRAND}</p>
+        </footer>
+      </main>
+    </SmoothScroll>
   );
 }
