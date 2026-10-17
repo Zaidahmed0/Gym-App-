@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Flame, Star, CalendarDays, Music, Droplet, KeyRound, LogOut, ChevronRight, Minus, Plus, BadgeCheck } from "lucide-react";
+import { Flame, Star, CalendarDays, Music, Droplet, KeyRound, LogOut, ChevronRight, Minus, Plus, BadgeCheck, HeartPulse } from "lucide-react";
 import type { Me, Membership, Settings, Theme } from "./types";
 
 type Props = {
@@ -37,10 +37,21 @@ export default function ProfileTab(p: Props) {
 
   const waterGoal = p.settings.water_goal || 8;
   const stats = [
-    { label: "Streak", value: p.streak, Icon: Flame },
-    { label: "Level", value: p.level, Icon: Star },
-    { label: "Days", value: p.totalDays, Icon: CalendarDays },
+    { label: "Streak", value: p.streak, Icon: Flame, fill: true },
+    { label: "Level", value: p.level, Icon: Star, fill: true },
+    { label: "Days", value: p.totalDays, Icon: CalendarDays, fill: false },
   ];
+
+  const row = (icon: React.ReactNode, title: string, sub: string, onClick: () => void, tint = soft, color = t.accent) => (
+    <motion.button whileTap={{ scale: 0.98 }} onClick={onClick} className="mt-3 w-full p-4 flex items-center gap-3 text-left" style={card}>
+      <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: tint, color }}>{icon}</span>
+      <div className="flex-1">
+        <p className="text-sm">{title}</p>
+        <p className="text-xs text-gray-400">{sub}</p>
+      </div>
+      <ChevronRight size={18} className="text-gray-500" />
+    </motion.button>
+  );
 
   return (
     <div>
@@ -60,10 +71,10 @@ export default function ProfileTab(p: Props) {
       </div>
 
       <div className="mt-6 grid grid-cols-3 text-center py-4" style={card}>
-        {stats.map(({ label, value, Icon }, i) => (
+        {stats.map(({ label, value, Icon, fill }, i) => (
           <div key={label} className={i === 1 ? "border-x border-white/10" : ""}>
             <div className="flex items-center justify-center gap-1.5">
-              <Icon size={18} color={t.accent} fill={label === "Calendar" ? "none" : label === "Days" ? "none" : t.accent} />
+              <Icon size={18} color={t.accent} fill={fill ? t.accent : "none"} />
               <p className="text-xl">{value}</p>
             </div>
             <p className="text-[11px] text-gray-400 mt-1">{label}</p>
@@ -89,16 +100,10 @@ export default function ProfileTab(p: Props) {
         <p className="mt-3 text-sm" style={{ color: p.daysLeft <= 7 ? "#fdba74" : t.accent }}>{p.daysLeft} days left</p>
       </div>
 
-      <button onClick={p.onMusic} className="mt-3 w-full p-4 flex items-center gap-3 text-left" style={card}>
-        <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: soft, color: t.accent }}>
-          <Music size={18} />
-        </span>
-        <div className="flex-1">
-          <p className="text-sm">Workout music</p>
-          <p className="text-xs text-gray-400">{p.settings.spotify_url ? "Spotify playlist connected" : "Add your Spotify playlist"}</p>
-        </div>
-        <ChevronRight size={18} className="text-gray-500" />
-      </button>
+      {row(<HeartPulse size={18} />, "Personal & emergency details", "Emergency contact, blood group, health",
+        () => window.dispatchEvent(new Event("open-my-details")), "#ef444422", "#f87171")}
+
+      {row(<Music size={18} />, "Workout music", p.settings.spotify_url ? "Spotify playlist connected" : "Add your Spotify playlist", p.onMusic)}
 
       <div className="mt-3 p-4 flex items-center gap-3" style={card}>
         <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: "#4DD8FF22", color: "#4DD8FF" }}>

@@ -3,7 +3,7 @@
   "short_name": "GymPulse",
   "description": "Your gym's workouts, streaks and check-in on your phone.",
   "id": "/download",
-  "start_url": "/login",
+  "start_url": "/start",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
