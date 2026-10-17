@@ -34,7 +34,7 @@ function Screen({ i }: { i: number }) {
   if (i === 0) {
     return (
       <div className="p-4">
-        <p className="text-[11px] text-gray-400">Hello, Rohan</p>
+        <p className="text-[11px] text-gray-400">Hello, Zayd</p>
         <p className={`${display.className} text-2xl leading-none mt-1`}>Ready to crush<br /><span style={{ color: ACCENT }}>your goals?</span></p>
         <div className="mt-4 p-3 rounded-2xl flex justify-between items-center text-black" style={{ background: ACCENT }}>
           <div><p className="text-[10px]">Current streak</p><p className={`${display.className} text-2xl`}>12 days</p></div>
@@ -66,7 +66,7 @@ function Screen({ i }: { i: number }) {
           <MapPin size={40} />
         </div>
         <p className="mt-6 text-xs" style={{ color: ACCENT }}>Checked in at Iron Tribe</p>
-        <p className={`${display.className} text-3xl leading-none mt-2`}>Welcome back,<br /><span style={{ color: ACCENT }}>Rohan!</span></p>
+        <p className={`${display.className} text-3xl leading-none mt-2`}>Welcome back,<br /><span style={{ color: ACCENT }}>Zayd!</span></p>
         <p className="mt-4 text-xs text-gray-400 italic">&ldquo;The hardest rep is walking through the door.&rdquo;</p>
         <div className="mt-6 grid grid-cols-2 gap-2 w-full">
           {[["14", "This month"], ["86", "Total visits"]].map(([v, l]) => (
