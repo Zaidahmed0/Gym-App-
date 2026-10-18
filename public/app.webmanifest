@@ -1,3 +1,4 @@
+@'
 {
   "name": "Gainzo",
   "short_name": "Gainzo",
@@ -16,3 +17,4 @@
     { "src": "/app-icon?size=512", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
+'@ | Set-Content -Path public\app.webmanifest -Encoding ascii

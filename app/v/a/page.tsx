@@ -11,7 +11,7 @@ import { Archivo_Black } from "next/font/google";
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
 const display = Archivo_Black({ weight: "400", subsets: ["latin"] });
-const BRAND = "GymPulse";
+const BRAND = "Gainzo";
 const ACCENT = "#D4F75C";
 const WHATSAPP = "919999999999";
 const px = (id: number) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1800`;
