@@ -23,7 +23,7 @@ export default function DownloadPage() {
 
         <div className="mt-10 p-6 rounded-3xl bg-zinc-900">
           <p className="text-sm text-gray-400">Android</p>
-          <a href="/downloads/gympulse.apk" download className="mt-3 block w-full py-4 text-center font-black text-black text-lg" style={{ background: ACCENT }}>
+          <a href="/downloads/gainzo.apk" download className="mt-3 block w-full py-4 text-center font-black text-black text-lg" style={{ background: ACCENT }}>
             DOWNLOAD APK
           </a>
           <ol className="mt-5 grid gap-2 text-sm text-gray-300 list-decimal list-inside">

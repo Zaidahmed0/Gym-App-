@@ -72,7 +72,7 @@ export default function StartPage() {
       <div className="max-w-md w-full mx-auto flex-1 flex flex-col">
         <motion.span initial={{ rotate: -10, scale: 0 }} animate={{ rotate: -2, scale: 1 }} transition={{ type: "spring", damping: 12 }}
           className="self-start text-xl font-black px-3 py-1 text-black" style={{ background: ACCENT }}>
-          GymPulse
+          Gainzo
         </motion.span>
 
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}

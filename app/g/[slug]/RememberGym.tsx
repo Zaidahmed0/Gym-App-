@@ -9,4 +9,4 @@ export default function RememberGym() {
     if (slug) localStorage.setItem("last-gym", slug);
   }, [slug]);
   return null;
-}
+}   

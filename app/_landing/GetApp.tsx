@@ -2,7 +2,7 @@
 
 import { Download } from "lucide-react";
 
-const APK = "/downloads/gympulse.apk";
+const APK = "/downloads/gainzo.apk";
 
 function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
   const isAndroid = /android/i.test(navigator.userAgent);
