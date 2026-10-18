@@ -352,7 +352,7 @@ export default function Landing() {
         </div>
 
         <div className="floater fixed top-0 left-0 z-40 w-[260px] h-[340px] rounded-3xl overflow-hidden pointer-events-none opacity-0 scale-75 hidden md:block">
-          <img src="" alt="" className="w-full h-full object-cover grayscale" />
+          <img alt="" className="w-full h-full object-cover grayscale" />
         </div>
 
         <header className="fixed top-0 inset-x-0 z-50">
@@ -605,7 +605,7 @@ export default function Landing() {
           </div>
 
           <p className="px-5 md:px-10 pt-6 pb-28 text-xs text-gray-600 flex flex-wrap justify-between gap-2">
-            <span>© {new Date().getFullYear()} {BRAND}. Made for Indian gyms.</span>
+            <span>© 2026 {BRAND}. Made for Indian gyms.</span>
             <a href="#top" className="hover:text-white">Back to top ↑</a>
           </p>
         </footer>
