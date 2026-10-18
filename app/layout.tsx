@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const SITE = "https://getgainzo.vercel.app/";
-const BRAND = "Get gainzo";
+const BRAND = "Gainzo";
 const DESCRIPTION =
   "Gym management software and a branded member app for Indian gyms. Members, dues, QR attendance with geofence, smart workout plans, streaks and push notifications. Free during early access.";
 

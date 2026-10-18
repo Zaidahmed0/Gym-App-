@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import RegisterSW from "./RegisterSW";
 
-const BRAND = "GymPulse";
+const BRAND = "Gainzo";
 const ACCENT = "#D4F75C";
 
 export const metadata: Metadata = {

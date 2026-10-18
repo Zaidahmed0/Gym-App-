@@ -18,7 +18,7 @@ import { GetAppLink, FloatingGetApp } from "./_landing/GetApp";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
-const BRAND = "Get gainzo";
+const BRAND = "Gainzo";
 const WHATSAPP = "917043015761";
 const EMAIL = "Zaidbro555@gmail.com";
 const SITE = "https://getgainzo.vercel.app/";
@@ -107,7 +107,7 @@ function Shell({ children, className = "" }: { children: React.ReactNode; classN
 function ScreenHome() {
   return (
     <div className="p-3.5">
-      <p className="text-[10px] text-gray-400">Hello, Rohan</p>
+      <p className="text-[10px] text-gray-400">Hello, Zayd</p>
       <p className={`${display.className} text-xl leading-none mt-1`}>Ready to crush<br /><span style={{ color: ACCENT }}>your goals?</span></p>
       <div className="mt-3 p-3 rounded-2xl flex justify-between items-center text-black" style={{ background: ACCENT }}>
         <div><p className="text-[9px]">Current streak</p><p className={`${display.className} text-xl`}>12 days</p></div>
@@ -141,7 +141,7 @@ function ScreenCheckin() {
         <MapPin size={32} />
       </div>
       <p className="mt-5 text-[10px]" style={{ color: ACCENT }}>Checked in</p>
-      <p className={`${display.className} text-2xl leading-none mt-1`}>Welcome back,<br /><span style={{ color: ACCENT }}>Rohan!</span></p>
+      <p className={`${display.className} text-2xl leading-none mt-1`}>Welcome back,<br /><span style={{ color: ACCENT }}>Zayd!</span></p>
       <p className="mt-3 text-[10px] text-gray-400 italic">&ldquo;The hardest rep is walking through the door.&rdquo;</p>
       <div className="mt-4 grid grid-cols-2 gap-2 w-full">
         {[["14", "This month"], ["86", "Total"]].map(([v, l]) => (
