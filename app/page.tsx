@@ -7,19 +7,24 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { Archivo_Black } from "next/font/google";
-import { Flame, Play, MapPin, Check, Plus, Minus, ArrowUpRight, Download } from "lucide-react";
+import {
+  Flame, Play, MapPin, Check, Plus, Minus, ArrowUpRight, Download, Users, Wallet, Briefcase, QrCode,
+  TrendingUp, Megaphone, Bell, Palette, Dumbbell, Sparkles, Timer, PartyPopper, Music, Droplet,
+  Smartphone, HeartPulse, CalendarClock, Mail, MessageCircle, Target, IndianRupee, Repeat,
+} from "lucide-react";
 import SmoothScroll from "./v/SmoothScroll";
 import LeadForm from "./_landing/LeadForm";
 import { GetAppLink, FloatingGetApp } from "./_landing/GetApp";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
-const display = Archivo_Black({ weight: "400", subsets: ["latin"] });
-const BRAND = "GymPulse";
+const BRAND = "Get gainzo";
+const WHATSAPP = "917043015761";
+const EMAIL = "Zaidbro555@gmail.com";
+const SITE = "https://getgainzo.vercel.app/";
 const ACCENT = "#D4F75C";
-const WHATSAPP = "919999999999";
-const PRICES = { starter: "₹999", pro: "₹1,999" };
 
+const display = Archivo_Black({ weight: "400", subsets: ["latin"] });
 const px = (id: number, w = 900) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
 const TRAIL = [5327530, 11433060, 20873830, 4164759, 17210042, 13896072, 3837439, 9152548, 3763115, 4164755];
 
@@ -38,12 +43,58 @@ const CARDS = [
   { title: "YOUR BRAND", text: "Your logo, colors and fonts. Members see your gym on their home screen.", bg: "#161616", fg: "#fff", img: 17210042 },
 ];
 
+const OWNER_FEATURES = [
+  { Icon: Users, title: "Members & plans", text: "Add members in seconds, 1/3/6/12 month plans, renewals, pause or deactivate." },
+  { Icon: Wallet, title: "Payments & dues", text: "Full fee, part payments, Cash/UPI/Card. Every pending rupee tracked." },
+  { Icon: Briefcase, title: "Services", text: "Sell personal training, diet plans, lockers. Track who has what till when." },
+  { Icon: QrCode, title: "QR + geofence attendance", text: "Print a QR poster. Members scan at the door. Location stops fake check-ins." },
+  { Icon: TrendingUp, title: "Insights dashboard", text: "Today's footfall, busy hours, collections, dues, birthdays. One screen." },
+  { Icon: Megaphone, title: "Announcements", text: "Offers, timings, events with photos. Popup, pinned banner or push." },
+  { Icon: CalendarClock, title: "Auto expiry reminders", text: "7, 3 and 1 day before plans end. Every morning, without you lifting a finger." },
+  { Icon: Palette, title: "Your own branding", text: "Logo, colors, fonts, welcome message. It's your gym's app, not ours." },
+  { Icon: Dumbbell, title: "Workout builder", text: "60+ exercises with form videos. Build plans by day and assign in one tap." },
+  { Icon: HeartPulse, title: "Member profiles", text: "Emergency contacts, blood group, injuries, notes. Safety first." },
+];
+
+const MEMBER_FEATURES = [
+  { Icon: Sparkles, title: "Smart plan in 60 seconds", text: "Goal, age, muscle map, level, days. A full weekly routine, built for them." },
+  { Icon: Timer, title: "Workout mode", text: "Set counter, rest timer, form video on one tap, trophy at the end." },
+  { Icon: Flame, title: "Streaks & levels", text: "Every visit counts. Nobody wants to break a 21-day streak." },
+  { Icon: Target, title: "Goals & progress", text: "Weight trend, BMI, weekly charts. Progress they can actually see." },
+  { Icon: PartyPopper, title: "Check-in moment", text: "Scan the QR, get a welcome screen with confetti and a fresh quote." },
+  { Icon: Bell, title: "Push notifications", text: "Gym updates and reminders on the lock screen, like any big app." },
+  { Icon: Music, title: "Workout music", text: "Their Spotify playlists, switchable inside the app." },
+  { Icon: Droplet, title: "Water tracker", text: "Small daily wins that keep them opening the app." },
+  { Icon: Smartphone, title: "Installs like an app", text: "Android download or iPhone home screen. No app store needed." },
+];
+
+const MONEY = [
+  { Icon: Repeat, title: "Members stay longer", text: "Streaks, smart plans and nudges give people a reason to show up again tomorrow." },
+  { Icon: CalendarClock, title: "Renewals before expiry", text: "Reminders go out on their own, so plans get renewed before they lapse." },
+  { Icon: IndianRupee, title: "Dues don't slip away", text: "See every pending amount and send a polite WhatsApp reminder in one tap." },
+  { Icon: Users, title: "Win back the quiet ones", text: "Spot members missing for 7+ days before they quietly cancel." },
+  { Icon: Briefcase, title: "Sell more services", text: "PT, diet plans and lockers tracked properly means more add-on revenue." },
+  { Icon: Palette, title: "Look premium", text: "A branded app makes a local gym feel like a big brand. Members notice." },
+];
+
 const FAQS = [
+  { q: "Is it really free?", a: "Yes. It's free for our early partner gyms while we build it with you. If we ever add paid plans, we'll tell you well in advance and you decide." },
   { q: "Do members need the Play Store?", a: "No. Android members get a direct download link, iPhone members add it to their home screen in two taps." },
   { q: "Can I use my own logo and colors?", a: "Yes. Logo, accent color, background and font. Every member sees your branding." },
   { q: "What about members without smartphones?", a: "Check them in manually from your dashboard. Their plan, dues and expiry are still tracked." },
   { q: "Is member data safe?", a: "Each gym's data is kept separate, and passwords are encrypted so nobody, not even us, can read them." },
 ];
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: BRAND,
+  applicationCategory: "HealthApplication",
+  operatingSystem: "Android, iOS, Web",
+  description: "Gym management software and branded member app for Indian gyms: members, dues, QR attendance, smart workout plans, streaks and push notifications.",
+  url: SITE,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+};
 
 function Shell({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
@@ -127,11 +178,29 @@ function ScreenOwner() {
   );
 }
 
+function FeatureList({ items }: { items: { Icon: React.ComponentType<{ size?: number }>; title: string; text: string }[] }) {
+  return (
+    <div className="grid sm:grid-cols-2 gap-3">
+      {items.map(({ Icon, title, text }) => (
+        <div key={title} className="feat group p-5 rounded-3xl bg-zinc-900 border border-white/5 hover:border-[#D4F75C]/60 transition-colors">
+          <span className="w-11 h-11 rounded-2xl flex items-center justify-center text-black group-hover:rotate-6 transition-transform" style={{ background: ACCENT }}>
+            <Icon size={20} />
+          </span>
+          <p className="mt-4 font-black text-lg">{title}</p>
+          <p className="mt-1 text-sm text-gray-400">{text}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
   const hero = useRef<HTMLDivElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const wa = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi! I want a demo of ${BRAND} for my gym.`)}`;
+  const [tab, setTab] = useState<"owner" | "member">("owner");
+  const wa = (text: string) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
+  const waDemo = wa(`Hi! I want free access to ${BRAND} for my gym.`);
 
   useGSAP(
     () => {
@@ -139,8 +208,7 @@ export default function Landing() {
       const countEl = root.current?.querySelector(".pre-count");
       const title = SplitText.create(".hero-line", { type: "chars", mask: "chars" });
 
-      const intro = gsap.timeline();
-      intro
+      gsap.timeline()
         .to(counter, {
           v: 100,
           duration: 1.6,
@@ -176,14 +244,12 @@ export default function Landing() {
         scrollTrigger: { trigger: ".highlight", start: "top 80%", end: "bottom 45%", scrub: true },
       });
 
-      const expand = gsap.timeline({ scrollTrigger: { trigger: ".expand-wrap", start: "top top", end: "+=150%", scrub: 1, pin: true } });
-      expand
+      gsap.timeline({ scrollTrigger: { trigger: ".expand-wrap", start: "top top", end: "+=150%", scrub: 1, pin: true } })
         .fromTo(".expand", { clipPath: "inset(25% 32% 25% 32% round 28px)" }, { clipPath: "inset(0% 0% 0% 0% round 0px)", ease: "none" })
         .fromTo(".expand img", { scale: 1.4 }, { scale: 1, ease: "none" }, 0)
         .fromTo(".expand-text", { opacity: 0, y: 60 }, { opacity: 1, y: 0 }, 0.55);
 
-      const fan = gsap.timeline({ scrollTrigger: { trigger: ".fan-wrap", start: "top top", end: "+=120%", scrub: 1, pin: true } });
-      fan
+      gsap.timeline({ scrollTrigger: { trigger: ".fan-wrap", start: "top top", end: "+=120%", scrub: 1, pin: true } })
         .fromTo(".fan-left", { xPercent: 0, rotate: 0 }, { xPercent: -95, rotate: -10, ease: "power2.out" })
         .fromTo(".fan-right", { xPercent: 0, rotate: 0 }, { xPercent: 95, rotate: 10, ease: "power2.out" }, "<")
         .fromTo(".fan-mid", { scale: 0.9 }, { scale: 1.05, ease: "power2.out" }, "<")
@@ -202,6 +268,12 @@ export default function Landing() {
 
       gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
         gsap.from(el, { opacity: 0, y: 50, duration: 1, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 88%" } });
+      });
+
+      ScrollTrigger.batch(".money", {
+        start: "top 88%",
+        onEnter: (els) => gsap.from(els, { opacity: 0, y: 40, scale: 0.95, stagger: 0.08, duration: 0.8, ease: "expo.out" }),
+        once: true,
       });
 
       const cleanups: (() => void)[] = [];
@@ -230,7 +302,6 @@ export default function Landing() {
         const xTo = gsap.quickTo(floater, "x", { duration: 0.5, ease: "power3" });
         const yTo = gsap.quickTo(floater, "y", { duration: 0.5, ease: "power3" });
         let current: string | null = null;
-
         const show = (src: string) => {
           if (current !== src) floaterImg.src = src;
           current = src;
@@ -241,7 +312,6 @@ export default function Landing() {
           current = null;
           gsap.to(floater, { opacity: 0, scale: 0.7, duration: 0.25, overwrite: "auto" });
         };
-
         const onMove = (e: PointerEvent) => {
           xTo(e.clientX - 130);
           yTo(e.clientY - 170);
@@ -250,7 +320,6 @@ export default function Landing() {
           else hide();
         };
         const onScroll = () => hide();
-
         window.addEventListener("pointermove", onMove);
         window.addEventListener("scroll", onScroll, { passive: true });
         cleanups.push(() => {
@@ -266,6 +335,7 @@ export default function Landing() {
 
   return (
     <SmoothScroll>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
       <main ref={root} className="bg-black text-white overflow-x-clip selection:bg-[#D4F75C] selection:text-black">
         <div className="pre fixed inset-0 z-[100] flex items-end justify-between p-6 md:p-10 text-black" style={{ background: ACCENT }}>
           <span className={`${display.className} text-2xl`}>{BRAND}</span>
@@ -279,15 +349,17 @@ export default function Landing() {
         <header className="fixed top-0 inset-x-0 z-50">
           <div className="px-5 md:px-8 py-5 flex justify-between items-center">
             <span className={`${display.className} text-xl px-3 py-1 -rotate-2 text-black`} style={{ background: ACCENT }}>{BRAND}</span>
-            <div className="flex items-center gap-3 text-sm">
+            <nav className="flex items-center gap-3 text-sm">
+              <a href="#features" className="hidden md:inline hover:text-[#D4F75C]">Features</a>
               <GetAppLink className="hover:text-[#D4F75C] font-bold">GET APP</GetAppLink>
               <Link href="/login" className="hidden md:inline hover:text-[#D4F75C]">Owner login</Link>
-              <a href="#demo" className="px-4 py-2 bg-white text-black font-bold hover:bg-[#D4F75C] transition-colors">BOOK DEMO</a>
-            </div>
+              <a href="#free" className="px-4 py-2 bg-white text-black font-bold hover:bg-[#D4F75C] transition-colors">GET IT FREE</a>
+            </nav>
           </div>
         </header>
 
         <section ref={hero} className="relative h-[100svh] flex flex-col justify-center overflow-hidden cursor-crosshair touch-pan-y">
+          <h1 className="sr-only">{BRAND}: gym management software and branded member app for Indian gyms</h1>
           {TRAIL.map((id) => (
             <img key={id} src={px(id, 500)} alt="" className="trail absolute top-0 left-0 w-36 h-48 md:w-40 md:h-52 object-cover grayscale opacity-0 pointer-events-none rounded-lg" />
           ))}
@@ -300,11 +372,11 @@ export default function Landing() {
           <span className="sticker absolute top-[22%] right-[8%] z-[2] rotate-12 px-4 py-2 text-black font-black text-xs md:text-sm" style={{ background: ACCENT }}>
             MADE FOR INDIAN GYMS
           </span>
-          <span className="sticker absolute bottom-[16%] left-[6%] z-[2] -rotate-6 px-4 py-2 bg-white text-black font-black text-xs md:text-sm">
-            YOUR GYM. YOUR APP.
-          </span>
+          <a href="#free" className="sticker absolute bottom-[16%] left-[6%] z-[2] -rotate-6 px-4 py-2 bg-white text-black font-black text-xs md:text-sm">
+            FREE EARLY ACCESS →
+          </a>
           <div className="hero-fade absolute bottom-6 inset-x-5 md:inset-x-8 z-[2] flex justify-between items-end text-xs text-gray-400">
-            <span className="max-w-[220px]">The member app and owner dashboard that keeps people coming back.</span>
+            <span className="max-w-[240px]">Gym management software + a branded member app that keeps people coming back.</span>
             <span className="hidden md:inline">move your mouse ↗</span>
           </div>
         </section>
@@ -313,7 +385,7 @@ export default function Landing() {
           <div className={`marquee-track ${display.className} flex whitespace-nowrap text-black text-4xl md:text-6xl`}>
             {Array.from({ length: 2 }).map((_, k) => (
               <span key={k} className="flex">
-                {["NO DAYS OFF", "STREAKS", "SMART PLANS", "QR CHECK-IN", "YOUR BRAND", "LET'S GO"].map((t) => (
+                {["NO DAYS OFF", "STREAKS", "SMART PLANS", "QR CHECK-IN", "YOUR BRAND", "FREE NOW"].map((t) => (
                   <span key={t} className="px-6">{t} ●</span>
                 ))}
               </span>
@@ -363,6 +435,22 @@ export default function Landing() {
           <div className="border-t border-white/15" />
         </section>
 
+        <section id="features" className="px-5 md:px-10 py-24">
+          <p className={`reveal ${display.className} text-5xl md:text-8xl leading-[0.9]`}>EVERYTHING<br /><span style={{ color: ACCENT }}>INSIDE.</span></p>
+          <p className="reveal mt-4 text-gray-400 max-w-xl">Not a demo. Not &ldquo;coming soon&rdquo;. All of this is live today.</p>
+          <div className="reveal mt-10 inline-flex p-1 border-2 border-white">
+            {(["owner", "member"] as const).map((t) => (
+              <button key={t} onClick={() => setTab(t)} className="px-5 py-2.5 font-bold text-sm transition-colors"
+                style={tab === t ? { background: ACCENT, color: "#000" } : {}}>
+                {t === "owner" ? "FOR GYM OWNERS" : "FOR MEMBERS"}
+              </button>
+            ))}
+          </div>
+          <div className="mt-8">
+            <FeatureList items={tab === "owner" ? OWNER_FEATURES : MEMBER_FEATURES} />
+          </div>
+        </section>
+
         <section className="px-4 md:px-10 py-24">
           <p className={`${display.className} text-5xl md:text-8xl leading-[0.9] mb-16`}>WHAT YOU<br /><span style={{ color: ACCENT }}>GET.</span></p>
           {CARDS.map((c, i) => (
@@ -381,25 +469,41 @@ export default function Landing() {
         </section>
 
         <section className="px-5 md:px-10 py-24">
-          <p className={`reveal ${display.className} text-5xl md:text-8xl leading-[0.9]`}>SIMPLE<br /><span style={{ color: ACCENT }}>PRICING.</span></p>
-          <p className="reveal mt-4 text-gray-400">Per gym, per month. No setup fee.</p>
+          <p className={`reveal ${display.className} text-5xl md:text-8xl leading-[0.9]`}>HOW IT<br /><span style={{ color: ACCENT }}>PAYS YOU.</span></p>
+          <p className="reveal mt-4 text-gray-400 max-w-xl">Every feature is built around one thing: more members staying, paying and renewing.</p>
           <div className="mt-12 grid md:grid-cols-3 gap-4">
-            {[
-              { name: "Starter", price: PRICES.starter, note: "Up to 150 members", items: ["Branded member app", "Members, plans and dues", "Expiry reminders", "Workout library"], hot: false },
-              { name: "Pro", price: PRICES.pro, note: "Unlimited members", items: ["Everything in Starter", "QR + geofence check-in", "Smart workout plans", "Push notifications", "Insights dashboard"], hot: true },
-              { name: "Chain", price: "Let's talk", note: "Multiple branches", items: ["Everything in Pro", "Multi-branch view", "Priority support", "Custom onboarding"], hot: false },
-            ].map((p) => (
-              <div key={p.name} className={`reveal p-8 rounded-[2rem] border-2 flex flex-col ${p.hot ? "text-black" : "border-white/20"}`}
-                style={p.hot ? { background: ACCENT, borderColor: ACCENT } : {}}>
-                <p className="font-bold">{p.name}{p.hot && <span className="ml-2 text-xs px-2 py-0.5 bg-black text-white">POPULAR</span>}</p>
-                <p className={`${display.className} mt-4 text-5xl`}>{p.price}<span className="text-base opacity-60">{p.price.startsWith("₹") ? "/mo" : ""}</span></p>
-                <p className={`mt-1 text-sm ${p.hot ? "opacity-70" : "text-gray-400"}`}>{p.note}</p>
-                <div className="mt-6 grid gap-2.5 flex-1">
-                  {p.items.map((it) => <p key={it} className="flex items-center gap-2 text-sm"><Check size={16} strokeWidth={3} /> {it}</p>)}
-                </div>
-                <a href="#demo" className={`mt-8 py-3.5 text-center font-bold ${p.hot ? "bg-black text-white" : "bg-white text-black"}`}>GET STARTED</a>
+            {MONEY.map(({ Icon, title, text }, i) => (
+              <div key={title} className="money p-7 rounded-[2rem] border-2"
+                style={i === 0 ? { background: ACCENT, color: "#000", borderColor: ACCENT } : { borderColor: "rgba(255,255,255,0.15)" }}>
+                <Icon size={28} />
+                <p className={`${display.className} mt-6 text-2xl leading-tight`}>{title}</p>
+                <p className={`mt-2 ${i === 0 ? "opacity-80" : "text-gray-400"}`}>{text}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section id="free" className="px-4 md:px-10 py-24">
+          <div className="reveal relative rounded-[2.5rem] overflow-hidden p-8 md:p-16 text-black" style={{ background: ACCENT }}>
+            <p className="text-sm font-black">EARLY ACCESS</p>
+            <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-2">
+              <p className={`${display.className} text-[28vw] md:text-[14vw] leading-[0.8]`}>₹0</p>
+              <p className={`${display.className} text-3xl md:text-5xl leading-none pb-3`}>FOR NOW.<br />EVERYTHING.</p>
+            </div>
+            <p className="mt-6 text-lg max-w-2xl">
+              We&apos;re building {BRAND} with our first partner gyms. You get every feature free, we get your honest feedback. Fair deal?
+            </p>
+            <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-2 max-w-3xl">
+              {["Unlimited members", "Branded member app", "QR + geofence check-in", "Smart workout plans", "Payments & dues", "Push notifications"].map((x) => (
+                <p key={x} className="flex items-center gap-2 font-bold"><Check size={18} strokeWidth={3} /> {x}</p>
+              ))}
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href={waDemo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-7 py-4 bg-black text-white font-black">
+                <MessageCircle size={18} /> CLAIM FREE ACCESS ON WHATSAPP
+              </a>
+              <a href="#demo" className="inline-flex items-center gap-2 px-7 py-4 border-2 border-black font-black">BOOK A DEMO</a>
+            </div>
           </div>
         </section>
 
@@ -424,10 +528,12 @@ export default function Landing() {
         <section id="demo" className="px-4 md:px-10 py-24">
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div>
-              <p className={`reveal ${display.className} text-[15vw] md:text-[8vw] leading-[0.85]`}>BOOK A<br /><span style={{ color: ACCENT }}>DEMO.</span></p>
-              <p className="reveal mt-6 text-gray-300 max-w-md">15 minutes. We set up your gym live and show you everything.</p>
+              <p className={`reveal ${display.className} text-[15vw] md:text-[8vw] leading-[0.85]`}>LET&apos;S<br /><span style={{ color: ACCENT }}>TALK.</span></p>
+              <p className="reveal mt-6 text-gray-300 max-w-md">
+                Want to know more? Message us on WhatsApp and we&apos;ll set up your gym live, or leave your number and we&apos;ll call you.
+              </p>
               <div className="reveal mt-6 flex flex-wrap gap-3">
-                <a href={wa} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 bg-green-500 text-black font-bold">
+                <a href={wa(`Hi! I'd like to know more about ${BRAND}.`)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 bg-green-500 text-black font-bold">
                   WhatsApp us <ArrowUpRight size={16} />
                 </a>
                 <GetAppLink className="inline-flex items-center gap-2 px-6 py-3.5 border-2 border-white font-bold hover:bg-white hover:text-black transition-colors">
@@ -439,13 +545,32 @@ export default function Landing() {
           </div>
         </section>
 
+        <section className="px-4 md:px-10 pb-24">
+          <div className="reveal p-8 md:p-12 border-2 border-white grid md:grid-cols-[1fr_auto] gap-6 items-center">
+            <div>
+              <p className={`${display.className} text-3xl md:text-5xl leading-none`}>GOT AN <span style={{ color: ACCENT }}>IDEA?</span></p>
+              <p className="mt-3 text-gray-400 max-w-xl">A feature you wish existed? Something that annoyed you? We build what gym owners and members ask for. Tell us.</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <a href={wa(`Hi ${BRAND} team! I have a suggestion: `)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-5 py-3 bg-white text-black font-bold">
+                <MessageCircle size={16} /> WhatsApp
+              </a>
+              <a href={`mailto:${EMAIL}?subject=${encodeURIComponent(`Suggestion for ${BRAND}`)}`} className="inline-flex items-center gap-2 px-5 py-3 border-2 border-white font-bold">
+                <Mail size={16} /> Email
+              </a>
+            </div>
+          </div>
+        </section>
+
         <footer className="border-t-2 border-white pb-20 md:pb-0">
           <div className="px-5 md:px-10 py-10 flex flex-wrap justify-between gap-4 text-sm text-gray-400">
             <span className={`${display.className} text-white text-lg`}>{BRAND}</span>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-6">
+              <a href="#features" className="hover:text-white">Features</a>
               <GetAppLink className="hover:text-white">Get the app</GetAppLink>
               <Link href="/login" className="hover:text-white">Owner login</Link>
-              <a href={wa} className="hover:text-white">Contact</a>
+              <a href={wa(`Hi ${BRAND} team!`)} className="hover:text-white">WhatsApp</a>
+              <a href={`mailto:${EMAIL}`} className="hover:text-white">{EMAIL}</a>
             </div>
           </div>
           <p className={`${display.className} text-center text-[22vw] leading-[0.8] pb-2 select-none`} style={{ color: ACCENT }}>{BRAND}</p>
