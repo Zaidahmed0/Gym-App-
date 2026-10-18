@@ -1,8 +1,18 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "app.vercel.gym_app_j1ve.twa",
-        "sha256_cert_fingerprints": ["B2:F5:7E:50:E3:F8:C8:67:7C:2F:8B:A3:2C:20:F9:EF:98:3B:7B:2B:88:50:49:21:20:BD:0C:5B:A8:C7:6B:46"]
-      }
-    }]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.gainzo.app",
+      "sha256_cert_fingerprints": ["B2:F5:7E:50:E3:F8:C8:67:7C:2F:8B:A3:2C:20:F9:EF:98:3B:7B:2B:88:50:49:21:20:BD:0C:5B:A8:C7:6B:46"]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.gainzo.buildown",
+      "sha256_cert_fingerprints": ["B2:F5:7E:50:E3:F8:C8:67:7C:2F:8B:A3:2C:20:F9:EF:98:3B:7B:2B:88:50:49:21:20:BD:0C:5B:A8:C7:6B:46"]
+    }
+  }
+]
