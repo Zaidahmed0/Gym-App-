@@ -21,8 +21,9 @@ gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 const BRAND = "Gainzo";
 const WHATSAPP = "917043015761";
 const EMAIL = "Zaidbro555@gmail.com";
-const SITE = "https://getgainzo.vercel.app/";
+const SITE = "https://getgainzo.vercel.app";
 const ACCENT = "#D4F75C";
+const FOOTER_VIDEO = "/videos/gym.mp4";
 
 const display = Archivo_Black({ weight: "400", subsets: ["latin"] });
 const px = (id: number, w = 900) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
@@ -37,10 +38,10 @@ const ROWS = [
 ];
 
 const CARDS = [
-  { title: "SMART PLANS", text: "Goal, level and muscle focus in. A full weekly routine out. Every member, automatically.", bg: ACCENT, fg: "#000", img: 5327530 },
-  { title: "SCAN TO CHECK IN", text: "QR at the door plus a location check. No cheating from the couch.", bg: "#161616", fg: "#fff", img: 9152548 },
-  { title: "NO MORE CHASING", text: "Reminders go out before every plan ends. Dues tracked. Renewals on autopilot.", bg: "#ffffff", fg: "#000", img: 13896072 },
-  { title: "YOUR BRAND", text: "Your logo, colors and fonts. Members see your gym on their home screen.", bg: "#161616", fg: "#fff", img: 17210042 },
+  { title: "SMART PLANS", text: "Goal, level and muscle focus in. A full weekly routine out. Every member, automatically.", quote: "The bar doesn't care about your excuses.", bg: ACCENT, fg: "#000", img: 5327530 },
+  { title: "SCAN TO CHECK IN", text: "QR at the door plus a location check. No cheating from the couch.", quote: "Showing up is the first rep.", bg: "#161616", fg: "#fff", img: 9152548 },
+  { title: "NO MORE CHASING", text: "Reminders go out before every plan ends. Dues tracked. Renewals on autopilot.", quote: "Consistency beats motivation. Every single time.", bg: "#ffffff", fg: "#000", img: 13896072 },
+  { title: "YOUR BRAND", text: "Your logo, colors and fonts. Members see your gym on their home screen.", quote: "Same gym. Whole new level.", bg: "#161616", fg: "#fff", img: 17210042 },
 ];
 
 const OWNER_FEATURES = [
@@ -182,7 +183,7 @@ function FeatureList({ items }: { items: { Icon: React.ComponentType<{ size?: nu
   return (
     <div className="grid sm:grid-cols-2 gap-3">
       {items.map(({ Icon, title, text }) => (
-        <div key={title} className="feat group p-5 rounded-3xl bg-zinc-900 border border-white/5 hover:border-[#D4F75C]/60 transition-colors">
+        <div key={title} className="group p-5 rounded-3xl bg-zinc-900 border border-white/5 hover:border-[#D4F75C]/60 transition-colors">
           <span className="w-11 h-11 rounded-2xl flex items-center justify-center text-black group-hover:rotate-6 transition-transform" style={{ background: ACCENT }}>
             <Icon size={20} />
           </span>
@@ -276,6 +277,14 @@ export default function Landing() {
         once: true,
       });
 
+      gsap.from(".footer-brand", {
+        yPercent: 30,
+        opacity: 0,
+        duration: 1.2,
+        ease: "expo.out",
+        scrollTrigger: { trigger: ".footer-brand", start: "top 95%" },
+      });
+
       const cleanups: (() => void)[] = [];
 
       const heroEl = hero.current;
@@ -348,7 +357,7 @@ export default function Landing() {
 
         <header className="fixed top-0 inset-x-0 z-50">
           <div className="px-5 md:px-8 py-5 flex justify-between items-center">
-            <span className={`${display.className} text-xl px-3 py-1 -rotate-2 text-black`} style={{ background: ACCENT }}>{BRAND}</span>
+            <a href="#top" className={`${display.className} text-xl px-3 py-1 -rotate-2 text-black`} style={{ background: ACCENT }}>{BRAND}</a>
             <nav className="flex items-center gap-3 text-sm">
               <a href="#features" className="hidden md:inline hover:text-[#D4F75C]">Features</a>
               <GetAppLink className="hover:text-[#D4F75C] font-bold">GET APP</GetAppLink>
@@ -358,7 +367,7 @@ export default function Landing() {
           </div>
         </header>
 
-        <section ref={hero} className="relative h-[100svh] flex flex-col justify-center overflow-hidden cursor-crosshair touch-pan-y">
+        <section id="top" ref={hero} className="relative h-[100svh] flex flex-col justify-center overflow-hidden cursor-crosshair touch-pan-y">
           <h1 className="sr-only">{BRAND}: gym management software and branded member app for Indian gyms</h1>
           {TRAIL.map((id) => (
             <img key={id} src={px(id, 500)} alt="" className="trail absolute top-0 left-0 w-36 h-48 md:w-40 md:h-52 object-cover grayscale opacity-0 pointer-events-none rounded-lg" />
@@ -372,7 +381,7 @@ export default function Landing() {
           <span className="sticker absolute top-[22%] right-[8%] z-[2] rotate-12 px-4 py-2 text-black font-black text-xs md:text-sm" style={{ background: ACCENT }}>
             MADE FOR INDIAN GYMS
           </span>
-          <a href="#free" className="sticker absolute bottom-[16%] left-[6%] z-[2] -rotate-6 px-4 py-2 bg-white text-black font-black text-xs md:text-sm">
+          <a href="#free" className="sticker absolute bottom-[16%] left-[6%] z-[2] -rotate-6 px-4 py-2 bg-white text-black font-black text-xs md:text-sm hover:bg-[#D4F75C] transition-colors">
             FREE EARLY ACCESS →
           </a>
           <div className="hero-fade absolute bottom-6 inset-x-5 md:inset-x-8 z-[2] flex justify-between items-end text-xs text-gray-400">
@@ -435,12 +444,12 @@ export default function Landing() {
           <div className="border-t border-white/15" />
         </section>
 
-        <section id="features" className="px-5 md:px-10 py-24">
+        <section id="features" className="scroll-mt-24 px-5 md:px-10 py-24">
           <p className={`reveal ${display.className} text-5xl md:text-8xl leading-[0.9]`}>EVERYTHING<br /><span style={{ color: ACCENT }}>INSIDE.</span></p>
           <p className="reveal mt-4 text-gray-400 max-w-xl">Not a demo. Not &ldquo;coming soon&rdquo;. All of this is live today.</p>
           <div className="reveal mt-10 inline-flex p-1 border-2 border-white">
             {(["owner", "member"] as const).map((t) => (
-              <button key={t} onClick={() => setTab(t)} className="px-5 py-2.5 font-bold text-sm transition-colors"
+              <button key={t} type="button" onClick={() => setTab(t)} className="px-5 py-2.5 font-bold text-sm transition-colors"
                 style={tab === t ? { background: ACCENT, color: "#000" } : {}}>
                 {t === "owner" ? "FOR GYM OWNERS" : "FOR MEMBERS"}
               </button>
@@ -456,11 +465,14 @@ export default function Landing() {
           {CARDS.map((c, i) => (
             <div key={c.title} className="stack-card sticky mb-6 h-[70vh] min-h-[440px] rounded-[2rem] overflow-hidden grid md:grid-cols-2"
               style={{ top: `calc(10vh + ${i * 18}px)`, background: c.bg, color: c.fg }}>
-              <div className="p-8 md:p-12 flex flex-col justify-between">
+              <div className="p-8 md:p-12 flex flex-col justify-between gap-6">
                 <span className="text-sm font-bold">0{i + 1}</span>
+                <p className={`${display.className} text-3xl md:text-5xl leading-[1.05] max-w-md`}>
+                  <span className="opacity-30">&ldquo;</span>{c.quote}<span className="opacity-30">&rdquo;</span>
+                </p>
                 <div>
-                  <p className={`${display.className} text-5xl md:text-7xl leading-[0.9]`}>{c.title}</p>
-                  <p className="mt-4 text-lg opacity-80 max-w-sm">{c.text}</p>
+                  <p className={`${display.className} text-3xl md:text-4xl leading-none`}>{c.title}</p>
+                  <p className="mt-3 opacity-80 max-w-sm">{c.text}</p>
                 </div>
               </div>
               <img src={px(c.img, 1000)} alt="" className="hidden md:block w-full h-full object-cover grayscale" />
@@ -483,7 +495,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="free" className="px-4 md:px-10 py-24">
+        <section id="free" className="scroll-mt-24 px-4 md:px-10 py-24">
           <div className="reveal relative rounded-[2.5rem] overflow-hidden p-8 md:p-16 text-black" style={{ background: ACCENT }}>
             <p className="text-sm font-black">EARLY ACCESS</p>
             <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-2">
@@ -499,10 +511,10 @@ export default function Landing() {
               ))}
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href={waDemo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-7 py-4 bg-black text-white font-black">
+              <a href={waDemo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-7 py-4 bg-black text-white font-black hover:scale-[1.03] transition-transform">
                 <MessageCircle size={18} /> CLAIM FREE ACCESS ON WHATSAPP
               </a>
-              <a href="#demo" className="inline-flex items-center gap-2 px-7 py-4 border-2 border-black font-black">BOOK A DEMO</a>
+              <a href="#demo" className="inline-flex items-center gap-2 px-7 py-4 border-2 border-black font-black hover:bg-black hover:text-white transition-colors">BOOK A DEMO</a>
             </div>
           </div>
         </section>
@@ -512,7 +524,7 @@ export default function Landing() {
           <div className="mt-10">
             {FAQS.map((f, i) => (
               <div key={f.q} className="border-t border-white/15">
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full py-6 flex justify-between items-center gap-4 text-left">
+                <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full py-6 flex justify-between items-center gap-4 text-left">
                   <span className="text-lg md:text-xl font-bold">{f.q}</span>
                   <span className="w-9 h-9 flex items-center justify-center shrink-0 text-black" style={{ background: ACCENT }}>
                     {openFaq === i ? <Minus size={16} /> : <Plus size={16} />}
@@ -525,7 +537,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="demo" className="px-4 md:px-10 py-24">
+        <section id="demo" className="scroll-mt-24 px-4 md:px-10 py-24">
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div>
               <p className={`reveal ${display.className} text-[15vw] md:text-[8vw] leading-[0.85]`}>LET&apos;S<br /><span style={{ color: ACCENT }}>TALK.</span></p>
@@ -533,7 +545,7 @@ export default function Landing() {
                 Want to know more? Message us on WhatsApp and we&apos;ll set up your gym live, or leave your number and we&apos;ll call you.
               </p>
               <div className="reveal mt-6 flex flex-wrap gap-3">
-                <a href={wa(`Hi! I'd like to know more about ${BRAND}.`)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 bg-green-500 text-black font-bold">
+                <a href={wa(`Hi! I'd like to know more about ${BRAND}.`)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 bg-green-500 text-black font-bold hover:bg-green-400 transition-colors">
                   WhatsApp us <ArrowUpRight size={16} />
                 </a>
                 <GetAppLink className="inline-flex items-center gap-2 px-6 py-3.5 border-2 border-white font-bold hover:bg-white hover:text-black transition-colors">
@@ -552,28 +564,50 @@ export default function Landing() {
               <p className="mt-3 text-gray-400 max-w-xl">A feature you wish existed? Something that annoyed you? We build what gym owners and members ask for. Tell us.</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <a href={wa(`Hi ${BRAND} team! I have a suggestion: `)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-5 py-3 bg-white text-black font-bold">
+              <a href={wa(`Hi ${BRAND} team! I have a suggestion: `)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-5 py-3 bg-white text-black font-bold hover:bg-[#D4F75C] transition-colors">
                 <MessageCircle size={16} /> WhatsApp
               </a>
-              <a href={`mailto:${EMAIL}?subject=${encodeURIComponent(`Suggestion for ${BRAND}`)}`} className="inline-flex items-center gap-2 px-5 py-3 border-2 border-white font-bold">
+              <a href={`mailto:${EMAIL}?subject=${encodeURIComponent(`Suggestion for ${BRAND}`)}`} className="inline-flex items-center gap-2 px-5 py-3 border-2 border-white font-bold hover:bg-white hover:text-black transition-colors">
                 <Mail size={16} /> Email
               </a>
             </div>
           </div>
         </section>
 
-        <footer className="border-t-2 border-white pb-20 md:pb-0">
+        <footer className="border-t-2 border-white">
           <div className="px-5 md:px-10 py-10 flex flex-wrap justify-between gap-4 text-sm text-gray-400">
             <span className={`${display.className} text-white text-lg`}>{BRAND}</span>
             <div className="flex flex-wrap gap-6">
               <a href="#features" className="hover:text-white">Features</a>
               <GetAppLink className="hover:text-white">Get the app</GetAppLink>
               <Link href="/login" className="hover:text-white">Owner login</Link>
-              <a href={wa(`Hi ${BRAND} team!`)} className="hover:text-white">WhatsApp</a>
+              <a href={wa(`Hi ${BRAND} team!`)} target="_blank" rel="noreferrer" className="hover:text-white">WhatsApp</a>
               <a href={`mailto:${EMAIL}`} className="hover:text-white">{EMAIL}</a>
             </div>
           </div>
-          <p className={`${display.className} text-center text-[22vw] leading-[0.8] pb-2 select-none`} style={{ color: ACCENT }}>{BRAND}</p>
+
+          <div className="footer-brand relative isolate overflow-hidden select-none" aria-label={BRAND}>
+            <video
+              className="absolute inset-0 w-full h-full object-cover grayscale contrast-125"
+              src={FOOTER_VIDEO}
+              poster={px(20873830, 1600)}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 mix-blend-multiply" style={{ background: ACCENT }} />
+            <p className={`${display.className} relative bg-black text-white mix-blend-multiply text-center text-[23vw] leading-[0.85] pt-[1vw] pb-[3vw]`}>
+              {BRAND}
+            </p>
+          </div>
+
+          <p className="px-5 md:px-10 pt-6 pb-28 text-xs text-gray-600 flex flex-wrap justify-between gap-2">
+            <span>© {new Date().getFullYear()} {BRAND}. Made for Indian gyms.</span>
+            <a href="#top" className="hover:text-white">Back to top ↑</a>
+          </p>
         </footer>
 
         <FloatingGetApp />
